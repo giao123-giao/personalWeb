@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="作品详情">
+    <meta name="keywords" content="产品经理,作品展示,项目案例">
+    <meta name="author" content="张银豪">
+    <title>作品详情</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --border-color: #E0E0E0;
+            --transition-normal: 0.3s;
+            --radius-lg: 16px;
+            --spacing-xl: 50px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #FF8C5A;
+                --secondary: #6ED9D0;
+                --accent: #FFE66D;
+                --dark: #FAFAFA;
+                --light: #1A1A2E;
+                --gray: #A0A0A0;
+                --card-bg: #16213E;
+                --text-primary: #FAFAFA;
+                --text-secondary: #A0A0A0;
+                --bg-primary: #0F0F1A;
+                --border-color: #3A3A5A;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 0px 40px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            transition: all var(--transition-normal);
+            margin-bottom: 20px;
+            margin-top: 40px;
+        }
+
+        .back-link:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .work-title {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .work-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .work-tag {
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .work-tag.secondary {
+            background: var(--secondary);
+        }
+
+        .section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .section-content {
+            font-size: 17px;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .section-content p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .work-showcase {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-top: 20px;
+            border: 2px solid var(--border-color);
+        }
+
+        .showcase-icon {
+            font-size: 64px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .showcase-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        .showcase-iframe-container {
+            width: 95vw;
+            max-width: 1400px;
+            margin: 20px auto 0;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+        }
+
+        .showcase-iframe {
+            width: 100%;
+            height: 900px;
+            border: none;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            .work-title {
+                font-size: 28px;
+            }
+
+            .work-showcase {
+                padding: 25px;
+            }
+
+            .showcase-icon {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 16px;
+            }
+
+            .work-title {
+                font-size: 24px;
+            }
+
+            .work-showcase {
+                padding: 20px;
+                height: auto;
+                min-height: 400px;
+            }
+
+            .showcase-icon {
+                font-size: 40px;
+            }
+
+            .back-link {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="container">
+            <a href="#" onclick="goBack(); return false;" class="back-link">
+                ← 返回上一页
+            </a>
+
+            <h1 class="work-title" id="workTitle">作品名称</h1>
+            
+            <div class="work-tags" id="workTags"></div>
+
+            <section class="section">
+                <h2 class="section-title">作品介绍</h2>
+                <div class="section-content" id="workOverview">
+                    <p>作品介绍内容将在这里显示...</p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">作品展示</h2>
+                <div class="work-showcase" id="workShowcase">
+                    <div class="showcase-icon">🤖</div>
+                    <p class="showcase-description" id="showcaseDesc">作品展示描述将在这里显示...</p>
+                </div>
+            </section>
+        </div>
+        
+        <div class="showcase-iframe-container" id="iframeContainer" style="display: none;">
+            <iframe class="showcase-iframe" id="showcaseIframe" src="" title="作品展示"></iframe>
+        </div>
+    </main>
+
+    <script>
+        const works = {
+            'quality-trace': {
+                title: '去哪儿小程序原型',
+                tags: ['原型设计', '个人想法', '小程序'],
+                overview: '随着城市建设的发展，公共厕所的分布越来越广泛，但用户在陌生环境中往往难以快速找到附近的厕所。尤其是在旅游景区、商业区等人流密集的地方，寻找厕所成为了用户的痛点。"去哪儿屙"小程序旨在帮助用户快速找到附近的公共厕所，提供详细的厕所信息和导航服务，同时允许用户对厕所进行评价，为其他用户提供参考。',
+                showcase: {
+                    icon: '🤖',
+                    desc: '系统主界面展示了自然语言查询入口、追溯结果可视化、库存分析仪表盘等核心功能模块。用户只需输入自然语言问题，即可获得精准的追溯结果和智能分析建议。'
+                },
+                iframeUrl: 'where-you-gonna-shit.html'
+            },
+            'visitor-mgmt': {
+                title: '去哪儿屙小程序PRD',
+                tags: ['需求文档', 'PRD'],
+                overview: '去哪儿屙小程序的需求文档（PRD），详细描述了产品背景、需求列表、业务流程、页面元素和测试说明等内容。',
+                showcase: {
+                    icon: '📄',
+                    desc: '完整的产品需求文档，包含产品概览、8个核心需求的详细说明、业务流程图和测试验收标准。'
+                },
+                iframeUrl: 'visitor-mgmt-detail.html'
+            },
+        };
+
+        function getUrlParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        function renderWork(workId) {
+            const work = works[workId];
+            if (!work) {
+                document.getElementById('workTitle').textContent = '作品不存在';
+                return;
+            }
+
+            document.title = work.title + ' - 作品详情';
+            document.getElementById('workTitle').textContent = work.title;
+            
+            const tagsContainer = document.getElementById('workTags');
+            work.tags.forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'work-tag' + (tag === '获奖项目' ? ' secondary' : '');
+                tagEl.textContent = tag;
+                tagsContainer.appendChild(tagEl);
+            });
+
+            document.getElementById('workOverview').innerHTML = '<p>' + work.overview + '</p>';
+
+            if (work.iframeUrl) {
+                document.getElementById('workShowcase').style.display = 'none';
+                document.getElementById('iframeContainer').style.display = 'block';
+                document.getElementById('showcaseIframe').src = work.iframeUrl;
+            } else {
+                document.getElementById('workShowcase').style.display = 'block';
+                document.getElementById('iframeContainer').style.display = 'none';
+                document.querySelector('.showcase-icon').textContent = work.showcase.icon;
+                document.getElementById('showcaseDesc').textContent = work.showcase.desc;
+            }
+        }
+
+        function goBack() {
+            history.back();
+        }
+
+        const workId = getUrlParam('id') || 'quality-trace';
+        renderWork(workId);
+    </script>
+</body>
+</html>

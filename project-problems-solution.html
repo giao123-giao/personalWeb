@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="张银豪">
+    <meta name="description" content="项目进行中遇到的主要问题及解决方案 - B端产品经理项目经验总结">
+    <title>项目进行中遇到的主要问题及解决方案</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8C5A;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #FFFFFF;
+            --border-color: #2D3436;
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 60px;
+            --radius-sm: 8px;
+            --radius-md: 15px;
+            --radius-lg: 20px;
+            --transition-fast: 0.15s;
+            --transition-normal: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            line-height: 1.9;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 60px;
+            border-radius: var(--radius-lg);
+            border: 3px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 35px 0 15px;
+            padding-left: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 25px 0 12px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin: 15px 0;
+            color: var(--text-secondary);
+            text-align: justify;
+        }
+
+        .problem-box {
+            background: var(--bg-primary);
+            padding: 25px;
+            border-radius: var(--radius-md);
+            margin: 15px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .problem-title {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .solution-item {
+            background: rgba(255, 107, 53, 0.08);
+            padding: 15px 20px;
+            border-radius: var(--radius-sm);
+            margin: 10px 0;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .solution-item::before {
+            content: '✓';
+            position: absolute;
+            left: 10px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .phase-tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 10px 0;
+            color: var(--text-secondary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            margin-top: 40px;
+            transition: all var(--transition-normal);
+        }
+
+        .back-link:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            h1 {
+                font-size: 22px;
+                padding-bottom: 10px;
+            }
+
+            h2 {
+                font-size: 18px;
+                margin: 25px 0 10px;
+            }
+
+            .back-link {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            .problem-box {
+                padding: 20px;
+            }
+
+            .problem-title {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>项目进行中遇到的主要问题及解决方案</h1>
+
+        <div class="problem-box">
+            <div class="problem-title">1. 需求不明确、变更/增加</div>
+
+            <h3><span class="phase-tag">项目启动后开发前</span></h3>
+            <div class="solution-item"><strong>需求不明确：</strong>业务调研要仔细，尽量去客户现场体验线下的流程，若不能去现场也应建议客户让业务的具体执行人参与进来，去了解更多的业务细节</div>
+            <div class="solution-item"><strong>需求梳理：</strong>需求分析完成后形成需求文档，让客户签字确认，明确需求变更/增加需提前沟通，避免中途临时加需求</div>
+            <div class="solution-item"><strong>确定项目干系人的责任：</strong>确认好需求后要组织客户、第三方等确定各方的负责人，谁负责需求、谁负责接口、测试等等</div>
+            <div class="solution-item"><strong>定需求变更机制：</strong>客户约定需求变更流程，让客户内部确定需求负责人，建立简易的变更流程，即先提交给需求负责人，内部确定后书面将需求提给我，不接受口头变更/增加</div>
+            <div class="solution-item"><strong>风险预判：</strong>提前告知老板和客户，需求调整尽量放在开发前，开发中会导致项目延期/成本增高</div>
+
+            <h3><span class="phase-tag">开发中</span></h3>
+            <div class="solution-item"><strong>需求变更/增加流程：</strong>如项目开发前已有变更流程则按照约定流程进行，没有则需让客户内部确定需求负责人，建立简易的变更流程，即先提交给需求负责人，内部确定后书面将需求提给我，不接受口头变更/增加</div>
+            <div class="solution-item"><strong>需求变更/增加评估：</strong>评估需求工作量，明确告知客户变更/增加所带来的时间成本/金钱成本的增加</div>
+            <div class="solution-item"><strong>需求变更/增加确认：</strong>将评估结果告知客户/老板，在确认变更/增加后明确通知相关干系人修改后的交付时间</div>
+
+            <h3><span class="phase-tag">开发后</span></h3>
+            <div class="solution-item"><strong>版本管理：</strong>因系统开发完成后修改成本增加，明确告知客户/老板，修改会带来的影响，如项目周期延长等，尽量进行版本迭代时修改，而非立即修改</div>
+            <div class="solution-item"><strong>变更/增加筛选：</strong>若确实是非常紧急的需求，则筛选出核心需求并组织开发评估具体开发量，并同步给客户</div>
+            <div class="solution-item"><strong>记录变更/增加需求：</strong>将变更/增加的需求记录归档，总结经验，以供下一次项目使用作为参考经验</div>
+        </div>
+
+        <div class="problem-box">
+            <div class="problem-title">2. 资源调配</div>
+            <div class="solution-item"><strong>身兼多个项目精力不足：</strong>梳理项目的优先级，优先完成紧急/重要的项目，适当拒绝客户/老板的需求</div>
+            <div class="solution-item"><strong>开发资源不足：</strong></div>
+            <ul style="margin-left: 40px;">
+                <li>与老板/客户沟通优先开发紧急、核心的需求，非核心功能上线后迭代开发</li>
+                <li>向上申请资源，如项目紧急从其他项目人员中借调，或适当延长开发时间</li>
+                <li>简化开发流程，如代码评审等环节</li>
+            </ul>
+        </div>
+
+        <div class="problem-box">
+            <div class="problem-title">3. 项目进度把控</div>
+            <p>项目开发前要与客户确定好项目进度同步机制，如周例会同步。</p>
+        </div>
+
+        <div class="problem-box">
+            <div class="problem-title">4. 应急响应</div>
+
+            <h3><span class="phase-tag">系统有BUG导致流程进行不下去</span></h3>
+            <div class="solution-item"><strong>对外：</strong>第一时间响应，告知客户系统异常正在处理，预计处理时间，修复完成后立即通知客户</div>
+            <div class="solution-item"><strong>对内：</strong>紧急组织开发人员，告知出问题地方，要求紧急修复</div>
+
+            <h3><span class="phase-tag">系统有BUG不影响流程进行</span></h3>
+            <div class="solution-item"><strong>对外：</strong>告知客户BUG情况，承诺将在上班后第一时间修复，修复后通知客户</div>
+            <div class="solution-item"><strong>对内：</strong>记录bug情况，告知开发，上班后督促修复</div>
+
+            <h3><span class="phase-tag">有紧急问题开发不愿意修改</span></h3>
+            <div class="solution-item"><strong>解决方案：</strong>了解不愿修改原因，先协调，沟通无效告知老板，由老板裁决，或安排人员进行修复</div>
+        </div>
+
+        <a href="index.html" class="back-link">← 返回主页</a>
+    </div>
+</body>
+</html>

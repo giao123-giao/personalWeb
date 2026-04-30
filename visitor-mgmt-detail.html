@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="张银豪">
+    <meta name="description" content="去哪儿屙 - 厕所定位导航小程序PRD文档">
+    <title>去哪儿屙PRD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8C5A;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #FFFFFF;
+            --border-color: #2D3436;
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 60px;
+            --radius-sm: 8px;
+            --radius-md: 15px;
+            --radius-lg: 20px;
+            --transition-fast: 0.15s;
+            --transition-normal: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            line-height: 1.9;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 60px;
+            border-radius: var(--radius-lg);
+            border: 3px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 35px 0 15px;
+            padding-left: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 25px 0 12px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin: 12px 0;
+            color: var(--text-secondary);
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 8px 0;
+            color: var(--text-secondary);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 15px 0;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            table-layout: auto;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+            word-wrap: break-word;
+            max-width: 400px;
+        }
+
+        th {
+            background: var(--bg-primary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        tr:nth-child(even) {
+            background: var(--bg-primary);
+        }
+
+        strong {
+            color: var(--text-primary);
+        }
+
+        .highlight {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .table-wrapper {
+                border-radius: var(--radius-sm);
+                border: 1px solid var(--border-color);
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>去哪儿屙 - 厕所定位导航PRD</h1>
+
+        <h2>一、产品概览</h2>
+
+        <h3>1. 产品背景</h3>
+        <p>随着城市建设的发展，公共厕所的分布越来越广泛，但用户在陌生环境中往往难以快速找到附近的厕所。尤其是在旅游景区、商业区等人流密集的地方，寻找厕所成为了用户的痛点。</p>
+
+        <h3>2. 产品目标</h3>
+        <p>"去哪儿屙"小程序旨在帮助用户快速找到附近的公共厕所，提供详细的厕所信息和导航服务，同时允许用户对厕所进行评价，为其他用户提供参考。</p>
+
+        <h3>3. 产品用户</h3>
+        <ul>
+            <li><strong>城市居民</strong>：在日常生活中需要寻找厕所的用户</li>
+            <li><strong>游客</strong>：在陌生环境中需要快速找到厕所的游客</li>
+            <li><strong>老年人</strong>：对厕所需求更为迫切的老年群体</li>
+            <li><strong>家长</strong>：需要为孩子寻找厕所的家长</li>
+        </ul>
+
+        <h2>二、需求列表</h2>
+        <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>需求名称</th>
+                <th>需求描述</th>
+                <th>所需功能</th>
+            </tr>
+            <tr>
+                <td>厕所定位</td>
+                <td>找出附近的厕所并显示在地图上</td>
+                <td>定位、第三方地图数据接入、地图显示</td>
+            </tr>
+            <tr>
+                <td>厕所搜索</td>
+                <td>根据关键词搜索厕所</td>
+                <td>搜索功能、数据过滤</td>
+            </tr>
+            <tr>
+                <td>厕所列表</td>
+                <td>展示附近厕所的详细信息</td>
+                <td>列表展示、距离计算、评分显示</td>
+            </tr>
+            <tr>
+                <td>厕所导航</td>
+                <td>提供从当前位置到厕所的导航</td>
+                <td>路径规划、导航功能</td>
+            </tr>
+            <tr>
+                <td>厕所评价</td>
+                <td>允许用户对厕所进行评价和打分</td>
+                <td>评分系统、评论功能、图片上传</td>
+            </tr>
+            <tr>
+                <td>排行榜</td>
+                <td>展示厕所评分排行榜</td>
+                <td>数据统计、排名展示</td>
+            </tr>
+            <tr>
+                <td>个人中心</td>
+                <td>用户个人中心功能</td>
+                <td>用户信息、收藏、设置</td>
+            </tr>
+        </table>
+        </div>
+
+        <h2>三、使用流程</h2>
+        <p>整个使用流程图如下：</p>
+        <ol>
+            <li>用户打开小程序</li>
+            <li>系统获取用户当前位置</li>
+            <li>系统加载附近的厕所数据</li>
+            <li>用户浏览厕所列表或查看地图</li>
+            <li>用户选择厕所查看详情</li>
+            <li>用户可选择导航到厕所或对厕所进行评价</li>
+            <li>导航时系统提供路径规划和实时导航</li>
+            <li>评价时用户可进行评分、写评论、上传图片</li>
+            <li>评价提交后系统更新厕所评分数据</li>
+        </ol>
+
+        <h2>四、需求细节</h2>
+
+        <h3>1. 需求名称：厕所定位</h3>
+        <h4>2. 页面原型：首页（地图+厕所列表）</h4>
+        <h4>3. 页面元素：</h4>
+
+        <h4>（1）[1] 顶部导航栏</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>Logo</td>
+                <td>图标</td>
+                <td>展示逻辑：页面左上角显示，固定显示厕所图标和应用名称</td>
+            </tr>
+            <tr>
+                <td>定位区域</td>
+                <td>文本+图标</td>
+                <td>展示逻辑：页面顶部居中显示；显示当前位置和刷新按钮</td>
+            </tr>
+            <tr>
+                <td>搜索按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到搜索页面；权限逻辑：所有用户可见</td>
+            </tr>
+        </table>
+
+        <h4>（2）[2] 地图容器</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>地图</td>
+                <td>地图</td>
+                <td>展示逻辑：首页主区域显示；赋值逻辑：自动加载用户当前位置和附近厕所位置</td>
+            </tr>
+            <tr>
+                <td>加载状态</td>
+                <td>加载动画</td>
+                <td>展示逻辑：地图加载时显示</td>
+            </tr>
+            <tr>
+                <td>网络错误状态</td>
+                <td>错误提示</td>
+                <td>展示逻辑：网络连接失败时显示，包含重试按钮</td>
+            </tr>
+            <tr>
+                <td>用户定位标记</td>
+                <td>标记</td>
+                <td>展示逻辑：地图上显示用户当前位置</td>
+            </tr>
+            <tr>
+                <td>厕所标记</td>
+                <td>标记</td>
+                <td>展示逻辑：地图上显示附近厕所位置，点击显示厕所信息卡片</td>
+            </tr>
+        </table>
+
+        <h4>（3）[3] 厕所信息卡片</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>厕所名称</td>
+                <td>文本</td>
+                <td>展示逻辑：卡片顶部显示</td>
+            </tr>
+            <tr>
+                <td>地址</td>
+                <td>文本</td>
+                <td>展示逻辑：名称下方显示；包含地图标记图标</td>
+            </tr>
+            <tr>
+                <td>状态</td>
+                <td>标签</td>
+                <td>展示逻辑：名称右侧显示；赋值逻辑：开放中/维修中/拥挤</td>
+            </tr>
+            <tr>
+                <td>开放时间</td>
+                <td>文本</td>
+                <td>展示逻辑：地址下方显示</td>
+            </tr>
+            <tr>
+                <td>评分</td>
+                <td>星级+文本</td>
+                <td>展示逻辑：时间右侧显示；赋值逻辑：显示平均评分和评价数量</td>
+            </tr>
+            <tr>
+                <td>设施标签</td>
+                <td>标签组</td>
+                <td>展示逻辑：评分下方显示；包含免费/无障碍/有纸等标签</td>
+            </tr>
+            <tr>
+                <td>查看详情按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到详情页面；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>导航按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到导航页面；权限逻辑：所有用户可见</td>
+            </tr>
+        </table>
+
+        <h4>（4）[4] 筛选工具栏</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>筛选标签</td>
+                <td>按钮组</td>
+                <td>操作逻辑：点击后筛选对应条件的厕所；包含距离优先、免费、无障碍、有纸、开放中</td>
+            </tr>
+            <tr>
+                <td>清除按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后清除所有筛选条件</td>
+            </tr>
+        </table>
+
+        <h3>2. 需求名称：厕所搜索</h3>
+        <h4>2. 页面原型：搜索页面</h4>
+        <h4>3. 页面元素：</h4>
+
+        <h4>（1）[5] 搜索页面</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>返回按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>搜索输入框</td>
+                <td>文本</td>
+                <td>输入逻辑：支持文本输入；校验逻辑：无特殊校验</td>
+            </tr>
+            <tr>
+                <td>搜索按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后执行搜索；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>搜索历史</td>
+                <td>标签组</td>
+                <td>展示逻辑：显示历史搜索关键词；操作逻辑：点击后快速搜索</td>
+            </tr>
+            <tr>
+                <td>搜索结果</td>
+                <td>列表</td>
+                <td>展示逻辑：显示匹配的厕所列表；操作逻辑：点击后显示厕所详情</td>
+            </tr>
+        </table>
+
+        <h3>3. 需求名称：厕所详情</h3>
+        <h4>2. 页面原型：详情页面</h4>
+        <h4>3. 页面元素：</h4>
+
+        <h4>（1）[6] 详情页面</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>返回按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>厕所名称</td>
+                <td>文本</td>
+                <td>展示逻辑：页面顶部显示</td>
+            </tr>
+            <tr>
+                <td>地址</td>
+                <td>文本</td>
+                <td>展示逻辑：名称下方显示；包含地图标记图标</td>
+            </tr>
+            <tr>
+                <td>状态</td>
+                <td>标签</td>
+                <td>展示逻辑：名称右侧显示；赋值逻辑：开放中/维修中/拥挤</td>
+            </tr>
+            <tr>
+                <td>开放时间</td>
+                <td>文本</td>
+                <td>展示逻辑：卡片区域显示</td>
+            </tr>
+            <tr>
+                <td>评分</td>
+                <td>文本</td>
+                <td>展示逻辑：开放时间右侧显示</td>
+            </tr>
+            <tr>
+                <td>设施标签</td>
+                <td>标签组</td>
+                <td>展示逻辑：单独卡片显示；包含免费/无障碍/有纸等标签</td>
+            </tr>
+            <tr>
+                <td>用户评价列表</td>
+                <td>列表</td>
+                <td>展示逻辑：设施标签下方显示；包含评价者信息、评分、内容、时间</td>
+            </tr>
+            <tr>
+                <td>评价按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到评价页面；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>导航按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到导航页面；权限逻辑：所有用户可见</td>
+            </tr>
+        </table>
+
+        <h3>4. 需求名称：厕所导航</h3>
+        <h4>2. 页面原型：导航页面</h4>
+        <h4>3. 页面元素：</h4>
+
+        <h4>（1）[7] 导航地图</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>返回按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>导航地图</td>
+                <td>地图</td>
+                <td>展示逻辑：全屏显示；赋值逻辑：显示当前位置和目标厕所位置，以及导航路径</td>
+            </tr>
+            <tr>
+                <td>加载状态</td>
+                <td>加载动画</td>
+                <td>展示逻辑：地图加载时显示</td>
+            </tr>
+        </table>
+
+        <h4>（2）[8] 导航信息卡片</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>厕所名称</td>
+                <td>文本</td>
+                <td>展示逻辑：卡片顶部显示</td>
+            </tr>
+            <tr>
+                <td>距离</td>
+                <td>文本</td>
+                <td>展示逻辑：名称下方显示；赋值逻辑：显示实时距离</td>
+            </tr>
+            <tr>
+                <td>预计时间</td>
+                <td>文本</td>
+                <td>展示逻辑：距离下方显示；赋值逻辑：根据距离计算步行时间</td>
+            </tr>
+            <tr>
+                <td>指南针按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后显示指南针；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>开始导航按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后开始实时导航；权限逻辑：所有用户可见</td>
+            </tr>
+        </table>
+
+        <h3>5. 需求名称：厕所评价</h3>
+        <h4>2. 页面原型：评价页面</h4>
+        <h4>3. 页面元素：</h4>
+
+        <h4>（1）[9] 评价页面</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>返回按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>页面标题</td>
+                <td>文本</td>
+                <td>展示逻辑：页面顶部居中显示</td>
+            </tr>
+            <tr>
+                <td>厕所名称</td>
+                <td>文本</td>
+                <td>展示逻辑：返回按钮下方显示</td>
+            </tr>
+            <tr>
+                <td>厕所地址</td>
+                <td>文本</td>
+                <td>展示逻辑：名称下方显示；包含地图标记图标</td>
+            </tr>
+            <tr>
+                <td>评分标题</td>
+                <td>文本</td>
+                <td>展示逻辑：评分区域顶部显示</td>
+            </tr>
+            <tr>
+                <td>星级评分</td>
+                <td>交互元素</td>
+                <td>操作逻辑：点击星星设置评分；赋值逻辑：点击后显示对应数量的实心星星</td>
+            </tr>
+            <tr>
+                <td>评价内容</td>
+                <td>文本域</td>
+                <td>输入逻辑：支持多行文本输入；校验逻辑：提交时不能为空；最大长度：500字</td>
+            </tr>
+            <tr>
+                <td>图片上传</td>
+                <td>上传组件</td>
+                <td>操作逻辑：点击后选择图片；赋值逻辑：显示已上传图片预览；最大数量：3张</td>
+            </tr>
+            <tr>
+                <td>提交按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后提交评价；前置条件：必须先设置评分和填写评价内容；成功结果：提示提交成功并返回首页；失败结果：提示错误信息</td>
+            </tr>
+        </table>
+
+        <h3>6. 需求名称：排行榜</h3>
+        <h4>2. 页面原型：排行榜页面</h4>
+        <h4>3. 页面元素：</h4>
+
+        <h4>（1）[10] 排行榜页面</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>返回按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>页面标题</td>
+                <td>文本</td>
+                <td>展示逻辑：页面顶部居中显示</td>
+            </tr>
+            <tr>
+                <td>Tab切换</td>
+                <td>按钮组</td>
+                <td>操作逻辑：切换夯榜/拉榜；展示逻辑：当前Tab高亮显示</td>
+            </tr>
+            <tr>
+                <td>排行榜列表</td>
+                <td>列表</td>
+                <td>展示逻辑：显示排名、厕所名称、地址、评分、评价数量、设施标签</td>
+            </tr>
+            <tr>
+                <td>列表项点击</td>
+                <td>事件</td>
+                <td>操作逻辑：点击后跳转到厕所详情页面</td>
+            </tr>
+        </table>
+
+        <h3>7. 需求名称：个人中心</h3>
+        <h4>2. 页面原型：我的页面</h4>
+        <h4>3. 页面元素：</h4>
+
+        <h4>（1）[11] 我的页面</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>页面标题</td>
+                <td>文本</td>
+                <td>展示逻辑：页面顶部居中显示</td>
+            </tr>
+            <tr>
+                <td>用户头像</td>
+                <td>图标</td>
+                <td>展示逻辑：用户信息区域显示</td>
+            </tr>
+            <tr>
+                <td>用户名称</td>
+                <td>文本</td>
+                <td>展示逻辑：头像右侧显示</td>
+            </tr>
+            <tr>
+                <td>登录提示</td>
+                <td>文本</td>
+                <td>展示逻辑：名称下方显示</td>
+            </tr>
+            <tr>
+                <td>历史导航入口</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到历史导航页面</td>
+            </tr>
+            <tr>
+                <td>我的收藏入口</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到收藏页面</td>
+            </tr>
+            <tr>
+                <td>设置入口</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到设置页面</td>
+            </tr>
+            <tr>
+                <td>使用指南入口</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到使用指南页面</td>
+            </tr>
+            <tr>
+                <td>帮助与反馈入口</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到帮助与反馈页面</td>
+            </tr>
+            <tr>
+                <td>关于我们入口</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到关于我们页面</td>
+            </tr>
+        </table>
+
+        <h4>（2）[12] 设置页面</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>返回按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后返回我的页面；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>页面标题</td>
+                <td>文本</td>
+                <td>展示逻辑：页面顶部居中显示</td>
+            </tr>
+            <tr>
+                <td>消息通知开关</td>
+                <td>开关</td>
+                <td>操作逻辑：点击后切换开关状态；默认状态：开启</td>
+            </tr>
+            <tr>
+                <td>提示音开关</td>
+                <td>开关</td>
+                <td>操作逻辑：点击后切换开关状态；默认状态：关闭</td>
+            </tr>
+        </table>
+
+        <h4>（3）[13] 使用指南页面</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>返回按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后返回我的页面；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>页面标题</td>
+                <td>文本</td>
+                <td>展示逻辑：页面顶部居中显示</td>
+            </tr>
+            <tr>
+                <td>指南内容</td>
+                <td>文本</td>
+                <td>展示逻辑：分步骤展示查找厕所、导航、评价的使用方法</td>
+            </tr>
+        </table>
+
+        <h4>（4）[14] 帮助与反馈页面</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>返回按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后返回我的页面；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>页面标题</td>
+                <td>文本</td>
+                <td>展示逻辑：页面顶部居中显示</td>
+            </tr>
+            <tr>
+                <td>反馈内容</td>
+                <td>文本域</td>
+                <td>输入逻辑：支持多行文本输入；校验逻辑：提交时不能为空</td>
+            </tr>
+            <tr>
+                <td>提交按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后提交反馈；成功结果：提示提交成功并返回我的页面</td>
+            </tr>
+            <tr>
+                <td>联系方式</td>
+                <td>文本</td>
+                <td>展示逻辑：页面底部显示；包含邮箱和电话</td>
+            </tr>
+        </table>
+
+        <h4>（5）[15] 关于我们页面</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>返回按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后返回我的页面；权限逻辑：所有用户可见</td>
+            </tr>
+            <tr>
+                <td>页面标题</td>
+                <td>文本</td>
+                <td>展示逻辑：页面顶部居中显示</td>
+            </tr>
+            <tr>
+                <td>关于内容</td>
+                <td>文本</td>
+                <td>展示逻辑：包含应用介绍、功能特色、用户协议</td>
+            </tr>
+            <tr>
+                <td>版本号</td>
+                <td>文本</td>
+                <td>展示逻辑：页面底部居中显示</td>
+            </tr>
+        </table>
+
+        <h3>8. 需求名称：底部导航栏</h3>
+        <h4>2. 页面原型：全局底部导航</h4>
+        <h4>3. 页面元素：</h4>
+
+        <h4>（1）[16] 底部导航栏</h4>
+        <table>
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>逻辑细节</th>
+            </tr>
+            <tr>
+                <td>首页按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到首页；展示逻辑：当前在首页时高亮显示</td>
+            </tr>
+            <tr>
+                <td>排行榜按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到排行榜页面；展示逻辑：当前在排行榜页时高亮显示</td>
+            </tr>
+            <tr>
+                <td>我的按钮</td>
+                <td>按钮</td>
+                <td>操作逻辑：点击后跳转到我的页面；展示逻辑：当前在我页面时高亮显示</td>
+            </tr>
+        </table>
+
+        <h2>五、测试说明</h2>
+
+        <h3>1. 测试范围</h3>
+        <ul>
+            <li><strong>功能测试</strong>：所有核心功能的正常运行</li>
+            <li><strong>性能测试</strong>：地图加载速度、定位精度</li>
+            <li><strong>兼容性测试</strong>：不同设备和微信版本的兼容性</li>
+            <li><strong>用户体验测试</strong>：界面交互流畅度、操作便捷性</li>
+        </ul>
+
+        <h3>2. 测试账号</h3>
+        <p>无需登录，直接使用小程序</p>
+
+        <h3>3. 核心测试点</h3>
+        <ul>
+            <li>定位功能：能否准确获取用户位置</li>
+            <li>搜索功能：能否根据关键词找到相关厕所</li>
+            <li>导航功能：导航路径是否准确，实时导航是否流畅</li>
+            <li>评价功能：评分、评论、图片上传是否正常</li>
+            <li>排行榜功能：能否正常显示排名列表，点击能否进入详情</li>
+            <li>个人中心功能：各入口能否正常跳转</li>
+            <li>地图加载：地图加载速度和稳定性</li>
+            <li>响应速度：页面切换和操作响应速度</li>
+        </ul>
+
+        <h3>4. 验收标准</h3>
+        <ul>
+            <li>定位误差不超过50米</li>
+            <li>地图加载时间不超过3秒</li>
+            <li>导航路径规划准确</li>
+            <li>评价提交成功后厕所评分更新</li>
+            <li>界面操作流畅，无卡顿现象</li>
+            <li>适配主流移动设备屏幕</li>
+            <li>所有页面跳转正常，无404错误</li>
+        </ul>
+    </div>
+</body>
+</html>

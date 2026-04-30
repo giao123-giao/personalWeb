@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="张银豪">
+    <meta name="description" content="构建RAG时的数据处理策略 - 不同类型文档的差异化、精细化、上下文感知的数据预处理流程">
+    <title>构建RAG时的数据处理策略</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8C5A;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #FFFFFF;
+            --border-color: #2D3436;
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 60px;
+            --radius-sm: 8px;
+            --radius-md: 15px;
+            --radius-lg: 20px;
+            --transition-fast: 0.15s;
+            --transition-normal: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            line-height: 1.9;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 60px;
+            border-radius: var(--radius-lg);
+            border: 3px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 35px 0 15px;
+            padding-left: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 25px 0 12px;
+        }
+
+        p {
+            margin: 15px 0;
+            color: var(--text-secondary);
+            text-align: justify;
+        }
+
+        .highlight {
+            background: rgba(255, 107, 53, 0.08);
+            padding: 20px 25px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .phase-box {
+            background: var(--bg-primary);
+            padding: 25px;
+            border-radius: var(--radius-md);
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .phase-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 10px 0;
+            color: var(--text-secondary);
+        }
+
+        code {
+            background: var(--bg-primary);
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            margin-top: 40px;
+            transition: all var(--transition-normal);
+        }
+
+        .back-link:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            h1 {
+                font-size: 22px;
+                padding-bottom: 10px;
+            }
+
+            h2 {
+                font-size: 18px;
+                margin: 25px 0 10px;
+            }
+
+            .back-link {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>构建RAG时的数据处理策略</h1>
+
+        <p>在构建基于检索增强生成（RAG）系统的整个工程实践中，面对海量、异构、来源多样的原始文档集合，必须系统性地开展前置数据治理工作，这包括但不限于深度数据清洗、语义驱动的结构化建模、以及科学合理的文本切分（chunking）策略设计。</p>
+
+        <p>然而，实际操作中绝不能采用"一刀切"的粗放式处理方式——不同类型的文档因其内容组织逻辑，信息密度、用户查询意图及下游应用目标存在显著差异，因而必须实施差异化、精细化、上下文感知的数据预处理流程。</p>
+
+        <div class="highlight">
+            <p><strong>示例说明：</strong></p>
+            <p>针对问答对（QA）类文档，其天然具备明确的问题—答案二元结构，因此最小且最合理的语义切分单元应严格限定为"一个完整问题及其对应的标准答案"，以确保在检索阶段能精准召回具有完整问答逻辑的原子片段，避免因切分过细导致答案缺失或切分过粗引入无关噪声；</p>
+            <p>而对于具有清晰层级体系的文档（如产品手册、政策法规、企业知识库等），则必须在切分过程中主动识别并保留其原有的章节标题、子章节编号、段落隶属关系等结构化元信息，通过嵌入层级路径标识（如"第3章 > 3.2节 > 3.2.1小节"）或构建树状索引结构，保障用户发起"查询某一大类下全部相关内容"这类宽泛但有范围约束的高层级检索请求时，系统能够准确聚合并返回该分类节点下的所有相关子片段，而非仅随机命中其中孤立的一小段内容，从而从根本上规避信息召回不全、语义断层、上下文割裂等严重影响RAG效果的关键缺陷。</p>
+        </div>
+
+        <h2>闭环式智能预处理工作流</h2>
+
+        <p>为实现上述高适应性、高可控性、高可复现性的文档处理能力，我专门设计并落地了一套闭环式智能预处理工作流，该工作流深度融合大语言模型的理解力与自动化执行能力，具体包含三个紧密耦合、逐层递进的核心环节：</p>
+
+        <div class="phase-box">
+            <div class="phase-title">第一阶段：细粒度语义分类</div>
+            <p>由大模型对全部原始文档进行细粒度语义分类，不仅输出顶层类别标签（如"FAQ""技术白皮书""操作指南""合同模板"等），还同步识别其内在结构特征（如是否存在章节编号、是否含表格/代码块/公式、是否为纯对话体等），形成一份结构化的文档画像。</p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">第二阶段：动态策略生成</div>
+            <p>在分类结果基础上，模型进一步结合每类文档的典型范式与业务需求，动态生成定制化的数据清洗规则集（如去除页眉页脚、标准化日期格式、归一化术语表达）和结构化切分策略说明（如按标题层级切分、按问答对边界切分、按语义连贯性滑动窗口切分等），并明确标注各策略适用的边界条件与例外情形。</p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">第三阶段：自动化脚本生成</div>
+            <p>依据前序生成的策略说明书，模型自动生成健壮、可调试、带详细注释的Python处理脚本，该脚本涵盖文件解析（支持PDF/Word/Markdown/HTML等多种格式）、正则清洗、结构识别、层级提取、语义切块，元数据注入、输出验证等全流程功能，并内置异常捕获机制与日志追踪能力，确保从文档输入到结构化向量库就绪的整条链路具备高度的自动化水平、可解释性与工程可维护性。</p>
+        </div>
+
+        <p>经过这三个阶段后文档的处理已有一个大概的轮廓，剩余不足之处可以人工进行调整。</p>
+
+        <a href="index.html" class="back-link">← 返回主页</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="张银豪">
+    <meta name="description" content="PRD撰写Skill - 基于页面实现和spec.md文档，智能生成结构化PRD文档">
+    <title>PRD撰写Skill</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8C5A;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #FFFFFF;
+            --border-color: #2D3436;
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 60px;
+            --radius-sm: 8px;
+            --radius-md: 15px;
+            --radius-lg: 20px;
+            --transition-fast: 0.15s;
+            --transition-normal: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            line-height: 1.9;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 60px;
+            border-radius: var(--radius-lg);
+            border: 3px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 35px 0 15px;
+            padding-left: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 25px 0 12px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin: 15px 0;
+            color: var(--text-secondary);
+            text-align: justify;
+        }
+
+        code {
+            background: var(--bg-primary);
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        pre {
+            background: #1a1a2e;
+            color: #e4e4e7;
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: var(--bg-primary);
+            padding: 25px;
+            border-radius: var(--radius-md);
+            margin: 15px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(255, 107, 53, 0.15);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 5px;
+            font-weight: 600;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 10px 0;
+            color: var(--text-secondary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            margin-top: 40px;
+            transition: all var(--transition-normal);
+        }
+
+        .back-link:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+       
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            h1 {
+                font-size: 22px;
+                padding-bottom: 10px;
+            }
+
+            h2 {
+                font-size: 18px;
+                margin: 25px 0 10px;
+            }
+
+            .back-link {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            .demo-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PRD撰写Skill</h1>
+
+        <p>传统PRD撰写通常在原型设计完成后进行，内容除产品背景、目标、需求及功能清单外，主要为详细说明页面中的字段展示逻辑、操作流程等规则。这类工作具有高度的重复性和固定性，且在代码实现前设计的逻辑规则可能与实际开发产生偏差。借助AI开发原型后，利用AI根据代码逻辑和PRD模板自动生成页面规则，从而确保内容的准确性。</p>
+
+        <pre>---
+
+name: prd-generator
+description: 基于页面实现、spec.md文档和功能范围，匹配指定模板类型生成面向研发测试的结构化PRD，确保与技术约定一致并核对一致性。Invoke when user asks to generate PRD.
+
+---</pre>
+
+       
+
+        <h2># PRD Generator Skill</h2>
+
+        <h3>## Overview</h3>
+        <p>基于页面实现代码、spec.md规格文档及用户指定的功能范围，智能识别页面类型并匹配对应模板，生成面向研发和测试人员的结构化产品需求文档（PRD）。</p>
+
+        <h3>## When to Use</h3>
+        <ul>
+            <li>用户明确要求生成PRD文档时</li>
+            <li>用户需要将已实现的页面转化为PRD文档时</li>
+            <li>用户需要根据spec.md生成正式PRD时</li>
+        </ul>
+
+        <h3>## Template Types</h3>
+
+        <h4>### 1. 数据看板类 (data-prd-template.md)</h4>
+        <p><strong>适用场景：</strong></p>
+        <div>
+            <span class="tag">数据统计看板</span>
+            <span class="tag">报表分析页面</span>
+            <span class="tag">指标监控页面</span>
+        </div>
+        <p><strong>重点内容：</strong></p>
+        <ul>
+            <li>指标定义和数据口径</li>
+            <li>数据来源说明</li>
+            <li>筛选条件</li>
+            <li>图表说明</li>
+            <li>交互规则</li>
+        </ul>
+
+        <h4>### 2. 后台列表类 (backend-list-prd-template.md)</h4>
+        <p><strong>适用场景：</strong></p>
+        <div>
+            <span class="tag">数据列表管理页面</span>
+            <span class="tag">查询列表页面</span>
+            <span class="tag">台账管理页面</span>
+        </div>
+        <p><strong>重点内容：</strong></p>
+        <ul>
+            <li>筛选条件</li>
+            <li>列表字段定义</li>
+            <li>排序规则</li>
+            <li>分页规则</li>
+            <li>批量操作</li>
+            <li>行操作</li>
+        </ul>
+
+        <h4>### 3. 后台表单编辑类 (backend-form-edit-prd-template.md)</h4>
+        <p><strong>适用场景：</strong></p>
+        <div>
+            <span class="tag">新增/编辑表单页面</span>
+            <span class="tag">配置管理页面</span>
+            <span class="tag">数据录入页面</span>
+        </div>
+        <p><strong>重点内容：</strong></p>
+        <ul>
+            <li>字段定义</li>
+            <li>字段校验规则（必填、长度、格式）</li>
+            <li>默认值</li>
+            <li>字段联动逻辑</li>
+            <li>提交规则</li>
+        </ul>
+
+        <h4>### 4. 后台表单预览类 (backend-form-preview-prd-template.md)</h4>
+        <p><strong>适用场景：</strong></p>
+        <div>
+            <span class="tag">详情查看页面</span>
+            <span class="tag">预览页面</span>
+            <span class="tag">只读页面</span>
+        </div>
+        <p><strong>重点内容：</strong></p>
+        <ul>
+            <li>字段展示规则</li>
+            <li>数据展示格式</li>
+            <li>操作按钮</li>
+        </ul>
+
+        <h4>### 5. 用户前台类 (user-frontend-prd-template.md)</h4>
+        <p><strong>适用场景：</strong></p>
+        <div>
+            <span class="tag">C端用户页面</span>
+            <span class="tag">营销活动页面</span>
+            <span class="tag">产品展示页面</span>
+        </div>
+        <p><strong>重点内容：</strong></p>
+        <ul>
+            <li>用户交互场景</li>
+            <li>功能触发条件</li>
+            <li>操作反馈</li>
+            <li>展示规范</li>
+        </ul>
+
+        <h3>## Workflow</h3>
+
+        <div class="info-box">
+            <h4>### Step 1: 页面分析</h4>
+            <ol>
+                <li>读取目标页面的 <code>index.html</code>（或主要实现文件）</li>
+                <li>读取 <code>spec.md</code> 需求文档（如果存在）</li>
+                <li>读取 <code>content.md</code> 或其他相关文档</li>
+                <li>查看 <code>screenshot.png</code> 了解页面视觉</li>
+            </ol>
+        </div>
+
+        <div class="info-box">
+            <h4>### Step 2: 类型识别</h4>
+            <p>基于页面内容自动识别类型：</p>
+            <ul>
+                <li>包含大量图表、指标 → 数据看板类</li>
+                <li>包含列表、筛选、分页 → 后台列表类</li>
+                <li>包含表单输入、提交 → 后台表单编辑类</li>
+                <li>只有展示、无输入 → 后台表单预览类</li>
+                <li>C端用户界面 → 用户前台类</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>### Step 3: 需求确认</h4>
+            <p>向用户确认：</p>
+            <ul>
+                <li>PRD的页面类型（如未自动识别）</li>
+                <li>是否有指定的功能范围</li>
+                <li>特殊要求或关注点</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>### Step 4: PRD生成</h4>
+            <ol>
+                <li>应用对应模板</li>
+                <li>从页面实现和spec.md中提取信息</li>
+                <li>填充模板内容</li>
+                <li>保存到 <code>&lt;project-dir&gt;/src/prototypes/&lt;page-name&gt;/prd.md</code></li>
+            </ol>
+        </div>
+
+        <div class="info-box">
+            <h4>### Step 5: 一致性核对</h4>
+            <p>核对以下维度：</p>
+            <ul>
+                <li>✅ 功能点与页面实现一致</li>
+                <li>✅ 技术约定与spec.md一致</li>
+                <li>✅ 范围与用户要求一致</li>
+                <li>✅ 无遗漏核心内容</li>
+            </ul>
+            <p>如有不一致，返回Step 4重新生成。</p>
+        </div>
+
+        <h3>## Rules</h3>
+        <ol>
+            <li><strong>路径规范：</strong>PRD必须保存到 <code>src/prototypes/&lt;page-name&gt;/prd.md</code></li>
+            <li><strong>命名规范：</strong>文件名必须为 <code>prd.md</code>（小写）</li>
+            <li><strong>术语规范：</strong>使用研发/测试通用术语</li>
+            <li><strong>范围约束：</strong>用户指定范围时，不超出范围</li>
+            <li><strong>必须核对：</strong>生成后必须进行一致性核对</li>
+        </ol>
+
+        <h3>## Example Usage</h3>
+        <pre>用户：帮我生成 data-search 页面的PRD
+→ 执行：
+  1. 分析 index.html 和 spec.md
+  2. 识别为数据看板类
+  3. 应用 data-prd-template.md
+  4. 生成 src/prototypes/data-search/prd.md
+  5. 核对一致性</pre>
+
+        <a href="index.html" class="back-link">← 返回主页</a>
+    </div>
+</body>
+</html>

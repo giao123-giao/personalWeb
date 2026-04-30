@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="工作感悟详情">
+    <meta name="keywords" content="产品经理,工作感悟,经验分享">
+    <meta name="author" content="张银豪">
+    <title>工作感悟详情</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --border-color: #2D3436;
+            --transition-normal: 0.3s;
+            --radius-lg: 20px;
+            --spacing-xl: 60px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #FF8C5A;
+                --secondary: #6ED9D0;
+                --accent: #FFE66D;
+                --dark: #FAFAFA;
+                --light: #1A1A2E;
+                --gray: #A0A0A0;
+                --card-bg: #16213E;
+                --text-primary: #FAFAFA;
+                --text-secondary: #A0A0A0;
+                --bg-primary: #0F0F1A;
+                --border-color: #3A3A5A;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            transition: all var(--transition-normal);
+            margin-bottom: 40px;
+        }
+
+        .back-link:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .article-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .article-tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .article-title {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            line-height: 1.3;
+        }
+
+        .article-date {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .article-excerpt {
+            background: rgba(255, 107, 53, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 25px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 40px;
+        }
+
+        .article-excerpt strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .article-content {
+            font-size: 17px;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .article-content p {
+            margin-bottom: 25px;
+        }
+
+        .article-content h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 35px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed var(--border-color);
+        }
+
+        .article-content ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 25px;
+        }
+
+        .article-content li {
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-color);
+            position: relative;
+            padding-left: 28px;
+            font-size: 16px;
+        }
+
+        .article-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .article-content li:last-child {
+            border-bottom: none;
+        }
+
+        .key-takeaways {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 35px;
+            margin-top: 50px;
+        }
+
+        .key-takeaways h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .key-takeaways h3::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .key-takeaways ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-takeaways li {
+            padding: 10px 0;
+            font-size: 15px;
+            color: var(--text-secondary);
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .key-takeaways li::before {
+            content: '💡';
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            .article-title {
+                font-size: 28px;
+            }
+
+            .article-excerpt {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 16px;
+            }
+
+            .article-title {
+                font-size: 24px;
+            }
+
+            .back-link {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            .article-tag {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+
+            .article-date {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="container">
+            <a href="#" onclick="goBack(); return false;" class="back-link">
+                ← 返回上一页
+            </a>
+
+            <div class="article-header">
+                <span class="article-tag" id="articleTag">产品思维</span>
+                <h1 class="article-title" id="articleTitle">文章标题</h1>
+                <p class="article-date" id="articleDate">2025年05月</p>
+            </div>
+
+            <div class="article-excerpt" id="articleExcerpt">
+                <strong>核心观点：</strong>文章核心观点将在这里显示...
+            </div>
+
+            <div class="article-content" id="articleContent">
+                <p>文章正文内容将在这里显示...</p>
+            </div>
+
+            <div class="key-takeaways">
+                <h3>要点总结</h3>
+                <ul id="articleTakeaways">
+                    <li>要点总结将在这里显示...</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const articles = {
+            'systems-thinking': {
+                title: '产品经理如何培养系统性思维？',
+                tag: '产品思维',
+                date: '2025年05月',
+                excerpt: '系统性思维不是天生的，而是可以通过刻意练习培养的。关键在于建立"全局-局部-细节"的三层视角，学会从用户价值、业务目标、技术实现三个维度思考问题。',
+                content: `<p>在产品经理的工作中，系统性思维是一项至关重要的能力。它不仅能帮助我们更好地理解复杂问题，还能让我们做出更明智的决策。</p>
+
+<h3>什么是系统性思维？</h3>
+
+<p>系统性思维是一种从整体出发，考虑各个部分之间相互关系和相互影响的思维方式。它要求我们不仅看到单个问题，还要看到问题所处的整个系统。</p>
+
+<h3>为什么产品经理需要系统性思维？</h3>
+
+<ul>
+    <li><strong>理解复杂业务：</strong>现代产品往往涉及多个模块和利益相关者，需要从全局视角理解</li>
+    <li><strong>做出明智决策：</strong>任何决策都会影响多个方面，需要评估综合影响</li>
+    <li><strong>预测未来变化：</strong>能够预见决策的长期影响和潜在风险</li>
+    <li><strong>协调各方资源：</strong>更好地协调开发、设计、运营等团队</li>
+</ul>
+
+<h3>如何培养系统性思维？</h3>
+
+<p>培养系统性思维需要刻意练习，以下是一些实用方法：</p>
+
+<ul>
+    <li><strong>建立三层视角：</strong>全局、局部、细节</li>
+    <li><strong>学会问"为什么"：</strong>深入挖掘问题本质</li>
+    <li><strong>绘制系统图：</strong>可视化各部分关系</li>
+    <li><strong>关注反馈循环：</strong>理解因果关系</li>
+</ul>
+
+<p>通过不断练习，系统性思维会逐渐成为你的本能，让你在面对复杂问题时更加从容自信。</p>`,
+                takeaways: [
+                    '系统性思维是产品经理的核心能力',
+                    '建立全局-局部-细节三层视角',
+                    '学会从多个维度思考问题',
+                    '通过刻意练习可以逐步培养'
+                ]
+            },
+            'ai-agent': {
+                title: 'AI Agent落地实践：从概念到产品化',
+                tag: 'AI产品',
+                date: '2025年04月',
+                excerpt: 'AI Agent的价值不在于技术本身，而在于解决实际业务问题。落地过程中，数据治理、场景定义、效果评估是三个关键环节，缺一不可。',
+                content: `<p>随着AI技术的快速发展，AI Agent已经成为产品领域的热门话题。但是，从概念到实际落地，中间还有很长的路要走。</p>
+
+<h3>什么是AI Agent？</h3>
+
+<p>AI Agent是一种能够自主感知环境、做出决策并执行任务的人工智能系统。它不仅能够回答问题，还能够主动完成复杂任务。</p>
+
+<h3>落地AI Agent的关键环节</h3>
+
+<ul>
+    <li><strong>数据治理：</strong>高质量的数据是AI Agent的基础</li>
+    <li><strong>场景定义：</strong>明确解决什么问题，如何衡量成功</li>
+    <li><strong>效果评估：</strong>建立科学的评估指标和方法</li>
+    <li><strong>用户体验：</strong>设计友好的交互方式</li>
+</ul>
+
+<h3>实战经验分享</h3>
+
+<p>基于Dify平台构建质量追溯Agent的过程中，我们总结了以下经验：</p>
+
+<ul>
+    <li><strong>从简单场景入手：</strong>不要一开始就追求复杂功能</li>
+    <li><strong>重视数据质量：</strong>投入足够时间进行数据清洗和整理</li>
+    <li><strong>持续迭代优化：</strong>根据用户反馈不断改进</li>
+</ul>
+
+<p>AI Agent的落地不是一蹴而就的，需要耐心和持续的投入。但一旦成功，它将带来巨大的价值。</p>`,
+                takeaways: [
+                    'AI Agent的价值在于解决实际业务问题',
+                    '数据治理是AI落地的基础',
+                    '场景定义要清晰具体',
+                    '建立科学的效果评估体系'
+                ]
+            },
+            'project-mgmt': {
+                title: '小团队中的产品经理如何做好项目管理？',
+                tag: '项目管理',
+                date: '2025年03月',
+                excerpt: '小团队中，产品经理往往需要身兼数职。关键是建立清晰的需求优先级机制，保持透明的沟通节奏，以及建立可量化的验收标准。',
+                content: `<p>在资源有限的小团队中，产品经理常常需要承担项目管理的职责。如何在这种情况下做好项目管理？</p>
+
+<h3>小团队项目管理的挑战</h3>
+
+<ul>
+    <li><strong>资源有限：</strong>人手少、时间紧</li>
+    <li><strong>角色模糊：</strong>一人多岗是常态</li>
+    <li><strong>沟通成本：</strong>信息容易传递不畅</li>
+</ul>
+
+<h3>应对策略</h3>
+
+<p>面对这些挑战，我们可以采取以下策略：</p>
+
+<ul>
+    <li><strong>建立优先级机制：</strong>明确什么是最重要的</li>
+    <li><strong>保持透明沟通：</strong>定期同步进度和问题</li>
+    <li><strong>量化验收标准：</strong>避免模糊的需求描述</li>
+    <li><strong>灵活调整计划：</strong>适应变化是常态</li>
+</ul>
+
+<h3>实用工具推荐</h3>
+
+<p>以下工具可以帮助提升项目管理效率：</p>
+
+<ul>
+    <li><strong>任务管理：</strong>Jira、Trello、飞书项目</li>
+    <li><strong>文档协作：</strong>Confluence、Notion、飞书文档</li>
+    <li><strong>沟通工具：</strong>Slack、飞书、钉钉</li>
+</ul>
+
+<p>做好小团队项目管理的关键是保持灵活和透明，让每个人都清楚目标和进展。</p>`,
+                takeaways: [
+                    '建立清晰的需求优先级机制',
+                    '保持透明的沟通节奏',
+                    '建立可量化的验收标准',
+                    '保持灵活性，适应变化'
+                ]
+            },
+            'career-switch': {
+                title: '从技术转产品：我的转型心得',
+                tag: '职业成长',
+                date: '2025年02月',
+                excerpt: '技术背景是优势，但不能成为思维的桎梏。产品经理需要从"解决问题"转向"发现问题"，从"执行层"上升到"决策层"。',
+                content: `<p>很多技术人员都有转型产品经理的想法，我也是其中之一。在这里分享我的转型心得，希望能给大家一些启发。</p>
+
+<h3>技术背景的优势</h3>
+
+<ul>
+    <li><strong>理解技术实现：</strong>能够更好地评估需求的技术可行性</li>
+    <li><strong>与开发沟通：</strong>更容易理解开发的语言和挑战</li>
+    <li><strong>逻辑思维：</strong>技术训练培养了严谨的逻辑思维能力</li>
+</ul>
+
+<h3>需要转变的思维方式</h3>
+
+<p>从技术到产品，需要转变以下思维方式：</p>
+
+<ul>
+    <li><strong>从解决问题到发现问题：</strong>产品经理首先要发现用户的真实需求</li>
+    <li><strong>从执行到决策：</strong>产品经理需要做出权衡和选择</li>
+    <li><strong>从细节到全局：</strong>关注整体而非局部</li>
+</ul>
+
+<h3>转型建议</h3>
+
+<p>如果你也想转型，以下建议供你参考：</p>
+
+<ul>
+    <li><strong>学习产品知识：</strong>阅读经典书籍和文章</li>
+    <li><strong>参与实际项目：</strong>从小型项目开始实践</li>
+    <li><strong>建立产品思维：</strong>多从用户角度思考问题</li>
+</ul>
+
+<p>转型是一个过程，需要耐心和持续学习。但只要方向正确，坚持下去就一定会有收获。</p>`,
+                takeaways: [
+                    '技术背景是转型的优势',
+                    '需要从解决问题转向发现问题',
+                    '从执行层上升到决策层',
+                    '持续学习和实践是关键'
+                ]
+            },
+            'requirement-research': {
+                title: '如何做好B端产品的需求调研？',
+                tag: '需求分析',
+                date: '2025年01月',
+                excerpt: 'B端需求调研的关键是"听懂人话"。需要建立用户角色模型，深入业务场景，区分"想要"和"需要"，最终形成可落地的需求清单。',
+                content: `<p>B端产品的需求调研与C端有很大不同，需要更深入地理解业务流程和用户角色。</p>
+
+<h3>B端需求调研的特点</h3>
+
+<ul>
+    <li><strong>利益相关者多：</strong>涉及多个角色和部门</li>
+    <li><strong>业务复杂：</strong>需要理解复杂的业务流程</li>
+    <li><strong>专业性强：</strong>需要了解行业专业知识</li>
+</ul>
+
+<h3>需求调研方法</h3>
+
+<p>以下是一些有效的需求调研方法：</p>
+
+<ul>
+    <li><strong>用户访谈：</strong>深入了解用户的工作场景</li>
+    <li><strong>流程梳理：</strong>绘制业务流程图</li>
+    <li><strong>竞品分析：</strong>了解市场上的解决方案</li>
+    <li><strong>数据分析：</strong>从数据中发现问题</li>
+</ul>
+
+<h3>关键注意事项</h3>
+
+<ul>
+    <li><strong>区分"想要"和"需要"：</strong>用户说的不一定是真正需要的</li>
+    <li><strong>建立用户角色：</strong>理解不同角色的需求差异</li>
+    <li><strong>关注业务价值：</strong>需求要能带来实际价值</li>
+</ul>
+
+<p>做好B端需求调研需要耐心和细心，真正理解用户的业务场景和痛点。</p>`,
+                takeaways: [
+                    '建立用户角色模型',
+                    '深入理解业务场景',
+                    '区分用户的"想要"和"需要"',
+                    '形成可落地的需求清单'
+                ]
+            },
+            'ux-design': {
+                title: '企业级产品的UX设计思考',
+                tag: '用户体验',
+                date: '2024年12月',
+                excerpt: 'B端产品的UX不是炫技，而是效率。好的B端体验应该让用户"无感"地完成任务，减少认知负担，提升操作效率。',
+                content: `<p>企业级产品的用户体验设计有其独特的挑战和要求。与C端产品不同，B端产品更注重效率和专业性。</p>
+
+<h3>B端UX的核心原则</h3>
+
+<ul>
+    <li><strong>效率优先：</strong>帮助用户快速完成任务</li>
+    <li><strong>专业性：</strong>符合行业规范和用户习惯</li>
+    <li><strong>一致性：</strong>保持界面和交互的一致性</li>
+</ul>
+
+<h3>设计策略</h3>
+
+<p>以下是一些针对B端产品的设计策略：</p>
+
+<ul>
+    <li><strong>减少认知负担：</strong>避免复杂的交互方式</li>
+    <li><strong>提供快捷操作：</strong>常用功能易于访问</li>
+    <li><strong>清晰的信息架构：</strong>让用户知道在哪里找到什么</li>
+    <li><strong>适当的引导：</strong>帮助新用户上手</li>
+</ul>
+
+<h3>常见误区</h3>
+
+<p>在B端UX设计中，需要避免以下误区：</p>
+
+<ul>
+    <li><strong>过度炫技：</strong>复杂的动效可能影响效率</li>
+    <li><strong>忽视专业习惯：</strong>要符合行业用户的使用习惯</li>
+    <li><strong>信息过载：</strong>不要在界面上堆砌过多信息</li>
+</ul>
+
+<p>好的B端UX应该是"隐形"的，让用户专注于完成任务，而不是与界面作斗争。</p>`,
+                takeaways: [
+                    'B端UX的核心是效率',
+                    '让用户"无感"地完成任务',
+                    '减少认知负担',
+                    '保持界面一致性'
+                ]
+            }
+        };
+
+        function getUrlParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        function renderArticle(articleId) {
+            const article = articles[articleId];
+            if (!article) {
+                document.getElementById('articleTitle').textContent = '文章不存在';
+                return;
+            }
+
+            document.title = article.title + ' - 工作感悟';
+            document.getElementById('articleTitle').textContent = article.title;
+            document.getElementById('articleTag').textContent = article.tag;
+            document.getElementById('articleDate').textContent = article.date;
+            document.getElementById('articleExcerpt').innerHTML = '<strong>核心观点：</strong>' + article.excerpt;
+            document.getElementById('articleContent').innerHTML = article.content;
+
+            const takeawaysHtml = article.takeaways.map(item => '<li>' + item + '</li>').join('');
+            document.getElementById('articleTakeaways').innerHTML = takeawaysHtml;
+        }
+
+        function goBack() {
+            history.back();
+        }
+
+        const articleId = getUrlParam('id') || 'systems-thinking';
+        renderArticle(articleId);
+    </script>
+</body>
+</html>

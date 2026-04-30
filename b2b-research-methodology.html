@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="张银豪">
+    <meta name="description" content="B端业务调研方法论 - 穿透决策链-管控链-执行链三层结构的B端业务调研指南">
+    <title>B端业务调研方法论</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8C5A;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #FFFFFF;
+            --border-color: #2D3436;
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --spacing-xl: 60px;
+            --radius-sm: 8px;
+            --radius-md: 15px;
+            --radius-lg: 20px;
+            --transition-fast: 0.15s;
+            --transition-normal: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            line-height: 1.9;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 60px;
+            border-radius: var(--radius-lg);
+            border: 3px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 35px 0 15px;
+            padding-left: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 25px 0 12px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin: 15px 0;
+            color: var(--text-secondary);
+            text-align: justify;
+        }
+
+        .highlight {
+            background: rgba(255, 107, 53, 0.08);
+            padding: 20px 25px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .role-box {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            margin: 10px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .role-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .role-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .method-box {
+            background: var(--bg-primary);
+            padding: 25px;
+            border-radius: var(--radius-md);
+            margin: 15px 0;
+        }
+
+        .method-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .priority-list {
+            background: rgba(255, 107, 53, 0.08);
+            padding: 15px 20px;
+            border-radius: var(--radius-sm);
+            margin: 15px 0;
+        }
+
+        .priority-list li {
+            margin: 8px 0;
+            color: var(--text-secondary);
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(255, 107, 53, 0.15);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 5px;
+            font-weight: 600;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 10px 0;
+            color: var(--text-secondary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            margin-top: 40px;
+            transition: all var(--transition-normal);
+        }
+
+        .back-link:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            h1 {
+                font-size: 22px;
+                padding-bottom: 10px;
+            }
+
+            h2 {
+                font-size: 18px;
+                margin: 25px 0 10px;
+            }
+
+            .back-link {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            .role-box {
+                padding: 15px;
+            }
+
+            .highlight {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>B端业务调研：对象、类型与针对性方法</h1>
+        <p class="subtitle">B端业务调研的核心是穿透"决策链-管控链-执行链"三层结构，既要锚定顶层价值方向，也要贴合中层管控逻辑，更要落地一线操作场景。不同调研对象、不同业务场景（新系统设计/系统重构迭代）对应差异化的调研逻辑与方法。</p>
+
+        <h2>一、B端业务调研的对象</h2>
+        <p>B端业务调研需覆盖"决策-管控-执行"全链路角色，不同角色的定位、关注点与核心价值截然不同，是调研不可缺失的关键维度：</p>
+
+        <div class="role-box">
+            <div class="role-title">1. 业务提出者（决策者/发起人）</div>
+            <div class="role-desc">核心定位是业务方向的定调者，包括部门负责人、高管、客户方老板等，掌握决策权、预算权与优先级排序权。其核心关注点集中在<strong>业务价值、战略目标、投入产出、风险底线</strong>，决定"要不要做、做了要达成什么、能投入多少"。</div>
+        </div>
+
+        <div class="role-box">
+            <div class="role-title">2. 业务管理者（流程负责人/中层主管）</div>
+            <div class="role-desc">核心定位是承上启下的管控者，是业务流程、团队管理、跨部门协同的核心枢纽。其核心关注点集中在<strong>流程规范、管控效率、数据准确、跨部门协作</strong>，清楚流程卡点、管控失效、报表缺失等中层管理痛点，确保业务落地可管、可控。</div>
+        </div>
+
+        <div class="role-box">
+            <div class="role-title">3. 业务执行者（一线操作员）</div>
+            <div class="role-desc">核心定位是业务落地的直接参与者，包括基层员工、客服/销售/运维等高频使用系统的人员。其核心关注点集中在<strong>操作简单、少做重复工作、少出错、效率高</strong>，最清楚系统易用性、实操痛点、异常场景处理等一线真实问题。</div>
+        </div>
+
+        <h2>二、B端业务调研的类型</h2>
+        <p>B端业务调研主要分为两类核心场景，二者的调研逻辑存在本质差异：</p>
+
+        <div class="method-box">
+            <div class="method-title"><strong>1. 新系统设计调研</strong></div>
+            <p>针对全新提出的业务场景，核心逻辑是"从零定义业务"，需先明确业务的顶层诉求、中层管控规则与一线落地路径，确保系统设计匹配业务从0到1的搭建需求。</p>
+        </div>
+
+        <div class="method-box">
+            <div class="method-title"><strong>2. 系统重构或迭代调研</strong></div>
+            <p>针对现有系统优化的场景，核心逻辑不再是"从零定义"，而是"找问题、定优化目标，守存量底线、排迭代优先级"。核心原则是：先摸清"哪里烂、为什么烂"，再确认"什么不能动、什么必须改"，最后对齐"改完什么样才算好"。</p>
+        </div>
+
+        <h2>三、新系统设计调研方法</h2>
+        <p>新系统设计调研需围绕"定方向-摸痛点-补逻辑"的优先级推进，确保系统设计既贴合战略目标，又落地一线实操：</p>
+
+        <div class="priority-list">
+            <strong>调研优先级：</strong>
+            <ul>
+                <li>先找业务提出者定方向（避免做偏）</li>
+                <li>再找业务执行者摸真实痛点（避免需求悬浮）</li>
+                <li>最后找业务管理者补流程、规则、管控逻辑（确保方案可落地、可管理）</li>
+            </ul>
+        </div>
+
+        <h3>分角色核心调研方向</h3>
+
+        <div class="highlight">
+            <strong>（1）针对业务提出者：聚焦"为什么做、要达成什么、底线是什么"</strong>
+            <ul>
+                <li>调研业务初衷与战略目标：明确发起业务的核心目的，要解决的核心问题，以及期望达成的业务结果（营收、效率、合规、降本等）</li>
+                <li>确认价值衡量标准：明确业务/系统成功的判断依据，如核心KPI、验收标准</li>
+                <li>划定业务边界与范围：明确业务覆盖的部门/场景、不做的内容及优先级，以及合规、工期、预算等硬性约束</li>
+                <li>锁定核心痛点与诉求：找到当前最无法忍受的问题，以及必须满足的核心需求</li>
+                <li>识别风险与顾虑：梳理推进过程中最担心的问题（数据安全、流程变动、员工抵触、跨部门协同等）</li>
+                <li>了解未来规划：明确业务短期/长期迭代方向，以及扩展、联动其他业务的计划</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <strong>（2）针对业务执行者：聚焦"日常怎么做、实操痛点、哪里最麻烦"</strong>
+            <ul>
+                <li>梳理日常工作实操：明确每日/每周核心工作内容与完整操作步骤</li>
+                <li>挖掘实操痛点与低效问题：找出重复繁琐、易出错、耗时最长的工作环节</li>
+                <li>分析现有工具/系统问题：确认操作复杂度、多系统切换、数据重复填写等问题</li>
+                <li>了解异常场景处理：掌握特殊情况的处理方式，以及无规则的临时操作</li>
+                <li>排查协作与沟通痛点：明确跨同事/跨部门对接时的信息传递问题</li>
+                <li>收集落地层面真实需求：区分刚需功能与非必要功能，明确最希望优化的工作环节</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <strong>（3）针对业务管理者：聚焦"怎么管、流程怎么跑、管控难点在哪"</strong>
+            <ul>
+                <li>梳理现有管理流程：明确完整业务流程、各环节责任人、流转规则、审批节点</li>
+                <li>确认管控规则与标准：掌握业务的审核标准、合规要求、数据规范、异常处理规则</li>
+                <li>分析团队管理与考核：了解下属执行效果的考核方式，以及当前管理的核心卡点</li>
+                <li>排查跨部门协同问题：明确协作节点、配合痛点，信息同步问题</li>
+                <li>评估现有工具/系统使用：梳理当前工具的好用/难用功能，以及数据互通、重复录入问题</li>
+                <li>收集管理类需求：明确报表、统计、预警、权限管控等功能需求，以及希望简化的管理工作</li>
+            </ul>
+        </div>
+
+        <h2>四、系统重构或迭代调研方法</h2>
+        <p>系统重构/迭代调研需围绕"找痛点-守底线-定目标"展开，核心是先解决存量问题，再锚定优化方向，同时规避业务风险：</p>
+
+        <div class="priority-list">
+            <strong>调研优先级：</strong>
+            <ul>
+                <li>先找执行者（找真实痛点）</li>
+                <li>再找管理者（补流程规则）</li>
+                <li>最后找决策者（定目标和底线）</li>
+            </ul>
+        </div>
+
+        <h3>分角色核心调研方向</h3>
+
+        <div class="highlight">
+            <strong>（1）针对业务提出者：聚焦"重构动因、业务诉求、存量底线"</strong>
+            <ul>
+                <li>挖掘重构/迭代的真实动因：明确现有系统不可接受的问题（性能差，成本高、跟不上业务变化、合规/安全问题等）</li>
+                <li>确认业务层面的核心诉求：梳理重构后要解决的业务问题（提升转化率、降低投诉、支撑新业务线、减少人工成本等）</li>
+                <li>划定存量业务不可触碰的底线：明确绝对不能改的流程、数据、规则（避免业务事故/合规风险）</li>
+                <li>制定目标与验收标准：确定重构成功的可量化指标（效率提升、错误率下降、人力减少等）</li>
+                <li>明确资源与约束：梳理工期、预算、灰度上线要求，以及是否允许停服、是否兼容历史数据</li>
+                <li>了解未来业务规划：明确1-2年业务扩展计划，以及系统需预留的扩展性</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <strong>（2）针对业务管理者：聚焦"管控问题、流程规则、数据协同"</strong>
+            <ul>
+                <li>排查现有系统管控层面的核心问题：确认审批流、权限、数据校验、异常处理的失效场景，以及管理失控、违规操作问题</li>
+                <li>明确流程与规则的保留/修改诉求：区分必须保留、可优化简化的业务流程/审核规则</li>
+                <li>分析数据与报表痛点：梳理报表准确性、数据缺失、统计滞后/重复统计/多口径数据等问题</li>
+                <li>排查跨部门协同问题：明确系统导致的对账难，信息不同步、重复沟通等问题</li>
+                <li>评估人员与培训成本：了解现有系统的上手难度、新人培训成本，以及重构后希望降低的学习成本</li>
+                <li>梳理异常与风险管控：明确系统缺失的预警、纠错，回溯能力，以及因系统导致的业务风险案例</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <strong>（3）针对业务执行者：聚焦"实操痛点、可用性、习惯保留"</strong>
+            <ul>
+                <li>挖掘高频操作的极致痛点：找到每日重复最多，最耗时、最易出错、最反人类的操作步骤</li>
+                <li>排查系统可用性问题：梳理卡顿、崩溃、加载慢、查询困难、多系统切换、重复录入数据等具体场景</li>
+                <li>了解异常场景处理难题：掌握特殊业务下的"曲线救国"方式（线下Excel、口头沟通、私下改数据等）</li>
+                <li>识别无用/冗余功能：找出从来不用的功能、没必要填的字段、多余的页面</li>
+                <li>收集易用性优化诉求：明确最希望简化/自动化的环节，以及需增加的批量操作、导入导出、提醒功能</li>
+                <li>尊重历史操作习惯：确定绝对不能改的操作方式（避免效率大幅降低）</li>
+            </ul>
+        </div>
+
+        <h3>共性必问与风险调研</h3>
+        <ul>
+            <li><strong>必问共性问题：</strong>现有系统最不能忍的3个问题、最有用且不能删的3个功能、本次迭代最优先解决的1个问题</li>
+            <li><strong>核心风险点调研：</strong>历史数据是否完整迁移、老系统接口是否兼容、用户是否抗拒改变</li>
+        </ul>
+
+        <a href="index.html" class="back-link">← 返回主页</a>
+    </div>
+</body>
+</html>

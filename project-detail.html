@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="项目详情">
+    <meta name="keywords" content="产品经理,项目经验,产品案例">
+    <meta name="author" content="张银豪">
+    <title>项目详情</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --border-color: #E0E0E0;
+            --transition-normal: 0.3s;
+            --radius-lg: 16px;
+            --spacing-xl: 50px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #FF8C5A;
+                --secondary: #6ED9D0;
+                --accent: #FFE66D;
+                --dark: #FAFAFA;
+                --light: #1A1A2E;
+                --gray: #A0A0A0;
+                --card-bg: #16213E;
+                --text-primary: #FAFAFA;
+                --text-secondary: #A0A0A0;
+                --bg-primary: #0F0F1A;
+                --border-color: #3A3A5A;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 0px 40px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            transition: all var(--transition-normal);
+            margin-bottom: 80px;
+            margin-top: 40px;
+        }
+
+        .back-link:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .project-header {
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+
+        .project-role {
+            display: inline-block;
+            background: rgba(78, 205, 196, 0.15);
+            color: var(--secondary);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .project-title {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .project-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            justify-content: center;
+        }
+
+        .project-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .project-meta-item::before {
+            content: '•';
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .section-content {
+            font-size: 17px;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .section-content p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .section-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .section-content li {
+            padding: 15px 0;
+            border-bottom: 1px dashed var(--border-color);
+            position: relative;
+            padding-left: 32px;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .section-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .section-content li:last-child {
+            border-bottom: none;
+        }
+
+        .achievements-section {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-top: var(--spacing-xl);
+            margin-bottom: 20px;
+            border: 2px solid var(--border-color);
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .achievement-item {
+            text-align: center;
+            padding: 25px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 12px;
+        }
+
+        .achievement-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .achievement-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        .highlight-box {
+            background: rgba(255, 107, 53, 0.08);
+            border-left: 4px solid var(--primary);
+            padding: 25px 30px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            .project-title {
+                font-size: 28px;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-content li {
+                padding-left: 24px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 16px;
+            }
+
+            .project-title {
+                font-size: 24px;
+            }
+
+            .achievements-section {
+                padding: 25px;
+            }
+
+            .achievement-value {
+                font-size: 36px;
+            }
+
+            .back-link {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="container">
+            <a href="#" onclick="goBack(); return false;" class="back-link">
+                ← 返回上一页
+            </a>
+
+            <header class="project-header">
+                
+                <h1 class="project-title" id="projectTitle">项目名称</h1>
+                <span class="project-role" id="projectRole">产品经理</span>
+            </header>
+
+            <section class="section">
+                <h2 class="section-title">项目背景</h2>
+                <div class="section-content" id="projectBackground">
+                    <p>项目背景内容将在这里显示...</p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">重点工作内容</h2>
+                <div class="section-content" id="projectWork">
+                    <ul>
+                        <li>工作内容将在这里显示...</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">核心功能</h2>
+                <div class="section-content" id="projectFeatures">
+                    <ul>
+                        <li>核心功能将在这里显示...</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="achievements-section">
+                <h2 class="section-title">项目成果</h2>
+                <div class="achievements-grid" id="projectAchievements">
+                    <div class="achievement-item">
+                        <div class="achievement-value">0%</div>
+                        <div class="achievement-label">效率提升</div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-value">0%</div>
+                        <div class="achievement-label">成本降低</div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-value">0%</div>
+                        <div class="achievement-label">用户满意度</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const projects = {
+            'quality-trace': {
+                title: '汽车转向轴质量追溯Agent系统',
+                role: '产品经理+项目负责人',
+                background: '某汽车零部件制造企业面临产品质量追溯困难的问题，传统的追溯方式依赖人工查找纸质单据，效率低下且容易出错。企业希望通过数字化手段实现从成品到原材料的全链路逆向质量追溯，提升质量管理水平和客户满意度。',
+                work: [
+                    '需求调研与分析：深入车间一线，与生产、质检、仓储等部门沟通，梳理现有追溯流程和痛点',
+                    '系统架构设计：设计基于Dify平台的AI Agent架构，整合ERP、WMS等系统数据',
+                    'RAG知识库构建：组织业务专家整理产品BOM、工艺路线、质检标准等核心知识，并对收集的文档进行清洗和处理',
+                    '功能迭代管理：制定详细的产品路线图，分阶段交付核心功能',
+                    '用户培训与推广：编制操作手册，组织多轮培训，确保系统顺利落地'
+                ],
+                features: [
+                    '自然语言查询：用户可以用自然语言提问，系统自动检索相关数据并返回结果',
+                    '全链路追溯：支持从成品一键追溯到原材料批次、供应商、生产班组等信息',
+                    '智能分析：基于历史数据提供库存优化建议和采购决策辅助',
+                    '报表导出：支持多种格式的报表导出，满足审计和管理需求',
+                    
+                ],
+                achievements: [
+                    { value: '97%', label: '追溯效率提升' },
+                    { value: '95%', label: '回答准确率' },
+                    { value: '89%', label: '处置意见采纳率' }
+                ]
+            },
+            'visitor-mgmt': {
+                title: '友联畅行智管系统',
+                role: '产品经理+项目负责人',
+                background: '针对厂区本工、分包商、委外、外协、访客等多类人员及车辆、物资出入管理场景，解决全流程未电子化、多系统数据孤岛、资质准入与出入流程不规范、管理不协同、数据安全与追溯能力不足的问题。',
+                work: [
+                    '业务调研及流程梳理：深入调研厂区各部门及关于人员、车辆及物资出入管理流程及管理细则，绘制详细的业务流程图',
+                    '系统需求分析：整理各部门需求，进行优先级评估和需求排期',
+                    '功能及原型设计：根据需求分析，设计和拆分系统的功能模块和用户界面原型',
+                    '项目管理：负责项目计划、资源分配、进度监控和风险管理，组织第三方进行接口对接联调',
+                    '上线培训及支持：编写用户操作手册、组织多轮培训，确保用户快速上手，提供技术支持，解决用户问题，维护系统稳定运行',
+                    '迭代优化：主导系统上线后迭代优化，收集用户反馈持续提升易用性与流程效率。'
+                ],
+                features: [
+                    '智能审批：可配置化流程，支持多级审批流程，可自定义审批规则',
+                    '多种支付方式支持：针对船东委外人员缴纳管理费，支持个人支付、对公支付',
+                    '入厂身份核验：入厂前身份比对防止不良人员进入',
+                    '数据统计：提供丰富的统计报表，辅助管理决策',
+                    '工程项目管理：支持项目启动关闭，人员与项目深度绑定，防止未授权作业',
+                    '多系统数据对接：与厂内门禁系统、人资系统等进行数据对接，实现数据实时同步'
+                    
+                ],
+                achievements: [
+                    { value: '83%', label: '审批效率提升' },
+                    { value: '100%', label: '管理电子化率' },
+                    { value: '0%', label: '不良背景人员进入率' }
+                ]
+            },
+            'customs-mgmt': {
+                title: '友联海关监管物资系统',
+                role: '产品经理+项目负责人',
+                background: '浙江友联修造船厂围绕修理物品、船方采购、企业自采三类海关监管物资，搭建出厂、返厂、进厂标准化线上流程，实现物资、人员、车辆、单据的一体化核验与审批流转，配套数据汇总、智能预警、审批通知、基础信息管理能力，减少物资走私现象，规范海关监管物资出入厂管控，满足海关 AEO 认证合规要求，提升物资流转效率与管理追溯能力。',
+                work: [
+                    '需求调研与分析：深入友联厂内组织各部门业务管理者及执行者了解当前系统问题及未涵盖的管理角落，并进行需求分析',
+                    '迭代计划制定：根据需求分析结果，制定详细的功能迭代计划，包括功能模块、时间表、资源分配等，',
+                    '上线测试：制定测试方案，包括功能测试、性能测试、安全测试等，确保系统稳定运行',
+                    '培训及AEO认证支持：组织多轮培训，确保用户快速上手，提供技术支持，解决用户问题，维护系统稳定运行，协助企业进行AEO认证答辩'
+                ],
+                features: [
+                    '物资备案：实现监管物资的电子化备案管理',
+                    '进出厂管理：全流程电子化审批，支持扫码核验',
+                    '单船工程到期预警：自动检测单船工程是否到期，提前预警用户',
+                    '审计追溯：完整的操作日志和数据追溯功能'
+                ],
+                achievements: [
+                    { value: '96%', label: '走私率降低' },
+                    { value: '100%', label: '管理电子化率' },
+                    { value: '85%', label: '审批效率提升' }
+                ]
+            },
+            'crm': {
+                title: 'CRM客户去重+AI搜索',
+                role: '产品经理',
+                background: '现有的CRM系统缺少客户去重功能导致数据冗余，无效信息干扰多，在市场部门经理分配客户，以及专员领取或转让客户时发生同一客户多人跟进问题，查找客户时筛选条件过多不易操作，遂增加客户去重和AI搜索功能。',
+                work: [
+                    '需求调研：深入市场部门了解市场经理、专员在当前系统使用中的问题和需求',
+                    '功能、原型设计及测试：设计客户去重和AI搜索功能模块，进行功能测试',
+                    'AI搜索工作流拆解：将AI搜索功能拆解为多个子任务，包括文本处理、语义理解、数据库查询、筛选条件匹配等，确保功能模块独立可测试',
+                ],
+                features: [
+                    '客户去重：自动识别客户录入、客户分配过程中重复客户，保持数据整洁，防止重复跟进',
+                    'AI智能搜索：支持语义理解搜索，快速定位客户'
+                ],
+                achievements: [
+                    { value: '2.7%', label: '重复率降至' },
+                    { value: '40%', label: '客户跟进效率提升' },
+                    { value: '70%', label: 'AI意图识别准确率' }
+                ]
+            },
+            'ai-ops': {
+                title: '锦荣商贸陈代运营营销系统',
+                role: '产品经理',
+                
+                background: '传统服装批发市场商户面临线上转型需求，但缺乏电商运营能力，于是商贸城设立代运营团队为商户提供线上代运营服务，但现有业务均依靠人工开展效率低下，开发营销抽奖系统后台，旨在为代运营团队提供便捷、高效的店铺管理和幸运团抽奖运营功能，实现与抖音平台的数据对接，提升商品管理、幸运团活动运营及开奖流程的自动化程度和管理效率。',
+                work: [
+                    '需求调研与分析：调研服装批发市场商户线上转型需求与代运营团队人工作业痛点，梳理店铺管理、活动运营、开奖流程的核心需求',
+                    '产品设计与实现：负责代运营营销系统后台0-1 产品设计，规划商品管理、幸运团抽奖、活动配置、开奖管理等核心功能模块',
+                    '数据对接方案设计：主导系统与抖音平台数据对接的需求梳理与方案设计，实现运营数据互通同步',
+                    '抽奖活动全流程自动化规则搭建：搭建抽奖活动全流程自动化规则，替代人工操作，优化代运营团队作业流程',
+                    '产品原型输出：输出产品原型、PRD 文档，推进研发落地，协调完成功能开发、测试与上线',
+                    '跟进与迭代：跟进系统上线后使用反馈，持续迭代优化功能，提升代运营管理与活动运营效率'
+                ],
+                features: [
+                    '商户店铺与商品管理：为代运营团队提供商户店铺统一管理、商品信息维护、商品上下架等一站式管理能力，替代人工台账操作。',
+                    '抖音平台数据对接：实现系统与抖音平台数据互通，同步商品、活动、订单等运营数据，打通线上运营数据壁垒。',
+                    '幸运团活动全流程配置：支持抽奖活动创建、规则设置、参与用户管理等线上化配置，完成活动运营全流程线上化。',
+                    '自动化开奖与结果管理：按预设规则自动执行开奖、数据统计、结果公示，替代人工核算与手动开奖，提升流程效率。'
+                    
+                ],
+                achievements: [
+                    { value: '70%', label: '人工运营成本减少' },
+                    { value: '87%', label: '活动运营效率提升' },
+                    { value: '68%', label: '商品上架效率提升' }
+                ]
+            },
+            
+        };
+
+        function getUrlParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        function renderProject(projectId) {
+            const project = projects[projectId];
+            if (!project) {
+                document.getElementById('projectTitle').textContent = '项目不存在';
+                return;
+            }
+
+            document.title = project.title + ' - 项目详情';
+            document.getElementById('projectTitle').textContent = project.title;
+            document.getElementById('projectRole').textContent = project.role;
+
+            document.getElementById('projectBackground').innerHTML = '<p>' + project.background + '</p>';
+
+            const workList = project.work.map(item => '<li>' + item + '</li>').join('');
+            document.getElementById('projectWork').innerHTML = '<ul>' + workList + '</ul>';
+
+            const featureList = project.features.map(item => '<li>' + item + '</li>').join('');
+            document.getElementById('projectFeatures').innerHTML = '<ul>' + featureList + '</ul>';
+
+            const achievementsHtml = project.achievements.map(item => `
+                <div class="achievement-item">
+                    <div class="achievement-value">${item.value}</div>
+                    <div class="achievement-label">${item.label}</div>
+                </div>
+            `).join('');
+            document.getElementById('projectAchievements').innerHTML = achievementsHtml;
+        }
+
+        function goBack() {
+            history.back();
+        }
+
+        const projectId = getUrlParam('id') || 'quality-trace';
+        renderProject(projectId);
+    </script>
+</body>
+</html>

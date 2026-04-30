@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="张银豪 - AI实践">
+    <meta name="keywords" content="AI产品,AI Agent,Dify,产品工作AI化">
+    <meta name="author" content="张银豪">
+    <title>张银豪 - AI实践</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --border-color: #2D3436;
+            --transition-normal: 0.3s;
+            --radius-lg: 20px;
+            --spacing-xl: 60px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #FF8C5A;
+                --secondary: #6ED9D0;
+                --accent: #FFE66D;
+                --dark: #FAFAFA;
+                --light: #1A1A2E;
+                --gray: #A0A0A0;
+                --card-bg: #16213E;
+                --text-primary: #FAFAFA;
+                --text-secondary: #A0A0A0;
+                --bg-primary: #0F0F1A;
+                --border-color: #3A3A5A;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            background-color: var(--text-primary);
+            color: var(--bg-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        .page-title {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .practice-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .practice-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            transition: all var(--transition-normal);
+        }
+
+        .practice-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .practice-icon {
+            font-size: 56px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .practice-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .practice-desc {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .practice-features {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .practice-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            padding-left: 24px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .practice-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .practice-features li:last-child {
+            border-bottom: none;
+        }
+
+        .practice-highlight {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(78, 205, 196, 0.2));
+            border-color: var(--primary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--bg-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 12px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            transition: all var(--transition-normal);
+            margin-top: 40px;
+        }
+
+        .back-link:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            .page-title {
+                font-size: 32px;
+            }
+
+            .practice-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 16px;
+            }
+
+            .page-title {
+                font-size: 26px;
+            }
+
+            .practice-card {
+                padding: 20px;
+            }
+
+            .practice-icon {
+                font-size: 40px;
+            }
+
+            .practice-title {
+                font-size: 18px;
+            }
+
+            .practice-desc {
+                font-size: 14px;
+            }
+
+            .back-link {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="container">
+            <h1 class="page-title">AI实践</h1>
+            <p class="page-subtitle">探索AI在产品工作中的实际应用</p>
+
+            <div class="practice-grid">
+                <div class="practice-card" onclick="window.location.href='prd-writing-skill.html'" style="cursor: pointer;">
+                    <div class="practice-icon">📄</div>
+                    <h2 class="practice-title">PRD撰写Skill</h2>
+                    <p class="practice-desc">基于页面实现和spec.md文档，智能生成结构化PRD文档</p>
+                    <ul class="practice-features">
+                        <li>智能页面类型识别</li>
+                        <li>多模板自动匹配</li>
+                        <li>一致性自动核对</li>
+                        <li>研发测试友好格式</li>
+                    </ul>
+                </div>
+
+                <div class="practice-card" onclick="window.location.href='prd-annotation.html'" style="cursor: pointer;">
+                    <div class="practice-icon">🏷️</div>
+                    <h2 class="practice-title">PRD标注到原型</h2>
+                    <p class="practice-desc">将PRD逻辑规则融入页面标注，浮窗展示详细需求</p>
+                    <ul class="practice-features">
+                        <li>模块化需求聚合</li>
+                        <li>交互浮窗展示</li>
+                        <li>双向追溯机制</li>
+                        <li>增量更新支持</li>
+                    </ul>
+                </div>
+
+                <div class="practice-card" onclick="window.location.href='mobile-prototype-design.html'" style="cursor: pointer;">
+                    <div class="practice-icon">📱</div>
+                    <h2 class="practice-title">移动端原型设计</h2>
+                    <p class="practice-desc">专注6.86英寸移动端原型设计，精准尺寸规范</p>
+                    <ul class="practice-features">
+                        <li>精准尺寸约束</li>
+                        <li>视口禁止缩放</li>
+                        <li>垂直滚动适配</li>
+                        <li>组件代码复用</li>
+                    </ul>
+                </div>
+
+                <div class="practice-card" onclick="window.location.href='rag-data-strategy.html'" style="cursor: pointer;">
+                    <div class="practice-icon">🧠</div>
+                    <h2 class="practice-title">RAG数据处理策略</h2>
+                    <p class="practice-desc">构建RAG系统时的数据处理策略与最佳实践</p>
+                    <ul class="practice-features">
+                        <li>细粒度语义分类</li>
+                        <li>动态策略生成</li>
+                        <li>自动化脚本生成</li>
+                        <li>上下文感知切分</li>
+                    </ul>
+                </div>
+            </div>
+
+            <a href="index.html" class="back-link">
+                ← 返回主页
+            </a>
+        </div>
+    </main>
+</body>
+</html>

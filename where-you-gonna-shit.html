@@ -1,0 +1,3014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>去哪屙 - 厕所定位导航</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        /* 页面基础样式 */
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* PRD标注角标样式 */
+        .prd-badge {
+            display: inline-block !important;
+            vertical-align: top;
+            background-color: rgb(250, 173, 20) !important;
+            color: white !important;
+            font-size: 10px !important;
+            font-weight: bold !important;
+            line-height: 14px !important;
+            padding: 2px 6px !important;
+            border-radius: 4px !important;
+            cursor: pointer !important;
+            position: absolute !important;
+            top: 8px !important;
+            right: 8px !important;
+            z-index: 10000 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            min-width: 14px;
+            text-align: center;
+            margin: 0;
+            box-sizing: content-box;
+        }
+        
+        /* PRD浮窗样式 */
+        .prd-tooltip {
+            position: fixed;
+            background-color: #f0efef;
+            border-radius: 4px;
+            width: 450px;
+            max-height: 60vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 9999;
+            display: none;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        
+        .prd-tooltip.active {
+            display: block;
+        }
+        
+        .prd-tooltip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .prd-tooltip-title {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .prd-tooltip-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            padding: 4px;
+        }
+        
+        .prd-tooltip-content {
+            line-height: 1.6;
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .prd-tooltip-content p {
+            margin-bottom: 12px;
+        }
+        
+        .prd-tooltip-content strong {
+            font-weight: 600;
+        }
+        
+        .prd-tooltip-content em {
+            font-style: italic;
+        }
+        
+        .prd-tooltip-content ul,
+        .prd-tooltip-content ol {
+            margin-bottom: 12px;
+            padding-left: 20px;
+        }
+        
+        .prd-tooltip-content li {
+            margin-bottom: 4px;
+        }
+        
+        .prd-tooltip-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+        
+        .prd-tooltip-content th,
+        .prd-tooltip-content td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+        }
+        
+        .prd-tooltip-content th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+        
+        .prd-tooltip-content blockquote {
+            border-left: 3px solid #e0e0e0;
+            padding-left: 12px;
+            margin: 12px 0;
+            color: #666;
+            font-style: italic;
+        }
+        
+        /* 6.56英寸设备容器 */
+        .device-container {
+            width: 393px;
+            height: 852px;
+            background-color: white;
+            border-radius: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+            border: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 主要内容区 */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        /* 顶部导航栏 */
+        .top-bar {
+            background-color: white;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .logo {
+            font-size: 22px;
+            margin-right: 10px;
+        }
+        
+        .app-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ff5722;
+            letter-spacing: 0.5px;
+        }
+        
+        .location-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 12px;
+        }
+        
+        .location-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 6px 12px;
+            border-radius: 20px;
+            max-width: 180px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .location-icon {
+            font-size: 14px;
+            color: #ff5722;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+        
+        .location-text {
+            font-size: 13px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .refresh-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-left: 8px;
+            padding: 4px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+        
+        .refresh-btn:hover {
+            background-color: #f0f0f0;
+            color: #ff5722;
+        }
+        
+        .refresh-btn:active {
+            transform: rotate(180deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .help-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .help-btn:hover {
+            background-color: #f5f5f5;
+            color: #ff5722;
+        }
+        
+        /* 核心地图区 */
+        .map-container {
+            width: 100%;
+            height: calc(100vh - 120px);
+            background-color: #e0e0e0;
+            position: relative;
+            touch-action: manipulation;
+            overflow: hidden;
+        }
+        
+        /* 地图加载状态 */
+        .map-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            flex-direction: column;
+        }
+        
+        .map-loading-text {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 网络错误状态 */
+        .network-error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .error-icon {
+            font-size: 48px;
+            color: #f44336;
+            margin-bottom: 16px;
+        }
+        
+        .error-message {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .retry-button {
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .retry-button:hover {
+            background-color: #e64a19;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            color: #9e9e9e;
+            margin-bottom: 16px;
+        }
+        
+        .empty-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item.active {
+            color: #ff5722;
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .nav-item span {
+            font-size: 12px;
+        }
+        
+        .map-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            flex-direction: column;
+            color: #666;
+        }
+        
+        .map-placeholder i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #1a365d;
+        }
+        
+        /* 用户定位标记 */
+        .user-location {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .location-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #2196f3;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #2196f3;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(33, 150, 243, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(33, 150, 243, 0);
+            }
+        }
+        
+        /* 地图标记 */
+        .map-marker {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 5;
+        }
+        
+        .marker-icon {
+            font-size: 28px;
+            transition: transform 0.3s ease;
+        }
+        
+        .map-marker:hover .marker-icon {
+            transform: scale(1.2);
+        }
+        
+        .marker-distance {
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 6px;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        /* 筛选工具栏 */
+        .filter-bar {
+            position: absolute;
+            bottom: 70px;
+            left: 4px;
+            right: 4px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 2px;
+            z-index: 70;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 隐藏筛选工具栏的滚动条 */
+        .filter-bar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .filter-bar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* 禁止找厕所页面上下拖动 */
+        #home-page {
+            overflow: hidden;
+            touch-action: none;
+        }
+        
+        .filter-tags {
+            display: flex;
+            gap: 2px;
+            padding-bottom: 1px;
+        }
+        
+        .filter-tag {
+            min-width: 80px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            white-space: nowrap;
+            background-color: #f5f5f5;
+            color: #666;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .filter-tag.active {
+            background-color: #FF6B00;
+            color: white;
+        }
+        
+        /* 厕所信息卡片 */
+        .toilet-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .toilet-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .toilet-card-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .toilet-card-status {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-open {
+            background-color: #e8f5e8;
+            color: #4caf50;
+        }
+        
+        .status-closed {
+            background-color: #f5f5f5;
+            color: #9e9e9e;
+        }
+        
+        .status-busy {
+            background-color: #fff3e0;
+            color: #ff9800;
+        }
+        
+        .toilet-card-info {
+            margin-bottom: 12px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .info-item i {
+            margin-right: 8px;
+            color: #ff5722;
+        }
+        
+        .toilet-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .card-action-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ff5722;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .card-action-btn.primary {
+            background-color: #ff5722;
+            color: white;
+        }
+        
+        /* 页面切换 */
+        .page {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* 隐藏滚动条但保留滚动功能 */
+        .page::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .page {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* 加载状态 */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+        }
+        
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 87, 34, 0.1);
+            border-top-color: #ff5722;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .device-container {
+                width: 100%;
+                height: 100vh;
+                border: none;
+                border-radius: 0;
+            }
+        }
+        
+        /* 浮窗样式 */
+        .annotation-tooltip {
+            position: fixed;
+            background-color: #f0efef;
+            border-radius: 4px;
+            width: 450px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 99999;
+            max-height: 60vh;
+            overflow-y: auto;
+            pointer-events: auto;
+        }
+        
+        .tooltip-header {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tooltip-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .tooltip-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .tooltip-content {
+            padding: 12px;
+            line-height: 1.6;
+        }
+        
+        .tooltip-content p {
+            margin-bottom: 12px;
+        }
+        
+        .tooltip-content ul {
+            margin-bottom: 12px;
+            padding-left: 20px;
+        }
+        
+        .tooltip-content li {
+            margin-bottom: 8px;
+        }
+        
+        .tooltip-content strong {
+            font-weight: bold;
+        }
+        
+        .tooltip-content em {
+            font-style: italic;
+        }
+        
+        /* 表格样式 */
+        .tooltip-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+        
+        .tooltip-content th,
+        .tooltip-content td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+        }
+        
+        .tooltip-content th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        /* 引用样式 */
+        .tooltip-content blockquote {
+            border-left: 3px solid #e0e0e0;
+            padding-left: 12px;
+            margin: 12px 0;
+            color: #666;
+        }
+        
+        /* 评价页面样式 */
+        .review-page {
+            padding-bottom: 80px;
+        }
+        
+        .review-header {
+            background-color: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .review-toilet-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .review-toilet-info {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+        
+        .review-toilet-info i {
+            color: #ff5722;
+            margin-right: 8px;
+        }
+        
+        .rating-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .rating-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+        
+        .large-stars {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .large-stars i {
+            font-size: 40px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .large-stars i:hover,
+        .large-stars i.fa-star {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+        
+        .review-form {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 0;
+        }
+        
+        .form-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: none;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: #ff5722;
+        }
+        
+        .photo-upload {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .photo-upload-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .upload-list {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .upload-item {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-item:hover {
+            border-color: #ff5722;
+            background-color: #fff8f5;
+        }
+        
+        .upload-item i {
+            font-size: 24px;
+            color: #999;
+        }
+        
+        .upload-item.has-image {
+            border: none;
+        }
+        
+        .upload-item.has-image i {
+            display: none;
+        }
+        
+        .upload-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .remove-photo {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background-color: #f44336;
+            color: white;
+            border-radius: 50%;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            background-color: #e64a19;
+        }
+        
+        .submit-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* 搜索页面样式 */
+        .search-page {
+            padding-bottom: 80px;
+        }
+        
+        .search-bar {
+            background-color: white;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: #ff5722;
+        }
+        
+        .search-btn {
+            width: 48px;
+            height: 48px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .search-results {
+            padding: 16px;
+        }
+        
+        .search-result-item {
+            background-color: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        
+        .search-result-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .search-result-info {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .search-result-info i {
+            color: #ff5722;
+            margin-right: 8px;
+        }
+        
+        .search-result-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .search-result-tags span {
+            font-size: 12px;
+            background-color: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .search-history {
+            padding: 16px;
+        }
+        
+        .history-title {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .history-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .history-tag {
+            padding: 8px 16px;
+            background-color: #f5f5f5;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .history-tag:hover {
+            background-color: #ffeee8;
+            color: #ff5722;
+        }
+        
+        /* 列表页面通用样式 */
+        .list-page {
+            padding-bottom: 80px;
+        }
+        
+        .list-header {
+            background-color: white;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+        }
+        
+        .list-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .list-empty {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: white;
+            margin: 16px;
+            border-radius: 12px;
+        }
+        
+        .list-empty-icon {
+            font-size: 48px;
+            color: #ccc;
+            margin-bottom: 16px;
+        }
+        
+        .list-empty-text {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* 设置页面样式 */
+        .settings-item {
+            background-color: white;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .settings-item:active {
+            background-color: #f5f5f5;
+        }
+        
+        .settings-label {
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .settings-value {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .settings-switch {
+            width: 44px;
+            height: 24px;
+            background-color: #e0e0e0;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .settings-switch.active {
+            background-color: #ff5722;
+        }
+        
+        .settings-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+        }
+        
+        .settings-switch.active::after {
+            left: 22px;
+        }
+        
+        /* 关于页面样式 */
+        .about-page {
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        .about-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .about-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .about-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .about-version {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            margin-top: 24px;
+        }
+        
+        /* 指南页面样式 */
+        .guide-page {
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        .guide-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .guide-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .guide-step {
+            display: flex;
+            margin-bottom: 16px;
+        }
+        
+        .guide-step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .guide-step-number {
+            width: 28px;
+            height: 28px;
+            background-color: #ff5722;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .guide-step-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        /* 反馈页面样式 */
+        .feedback-page {
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        .feedback-form {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .feedback-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        .feedback-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: none;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        .feedback-textarea:focus {
+            outline: none;
+            border-color: #ff5722;
+        }
+        
+        .contact-info {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .contact-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .contact-item {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-container">
+        <!-- 首页 -->
+        <div id="home-page" class="page active">
+            <!-- 顶部导航栏 -->
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(1, event)" onmouseleave="hideTooltip(1)">1</span>
+                <div class="logo-section">
+                    <div class="logo">🚽</div>
+                    <div class="app-name">去哪屙</div>
+                </div>
+                <div class="location-section">
+                    <div class="location-wrapper">
+                        <i class="fa fa-map-marker location-icon"></i>
+                        <span class="location-text">北京市朝阳区</span>
+                    </div>
+                    <button class="refresh-btn">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+                <button class="help-btn" onclick="showPage('search-page')">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+            
+            <!-- 核心地图区 -->
+            <div class="map-container" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(2, event)" onmouseleave="hideTooltip(2)">2</span>
+                <!-- 地图加载状态 -->
+                <div id="map-loading" class="map-loading" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <div class="map-loading-text">正在加载地图...</div>
+                </div>
+                
+                <!-- 网络错误状态 -->
+                <div id="network-error" class="network-error" style="display: none;">
+                    <i class="fa fa-exclamation-circle error-icon"></i>
+                    <div class="error-message">网络连接失败，无法加载地图</div>
+                    <button class="retry-button" onclick="retryLoadMap()">重试</button>
+                </div>
+                
+                <!-- 空状态 -->
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <i class="fa fa-map-o empty-icon"></i>
+                    <div class="empty-message">附近暂无厕所信息</div>
+                    <button class="retry-button" onclick="retryLoadMap()">刷新</button>
+                </div>
+                
+                <!-- 地图内容 -->
+                <div id="map-content" style="width: 100%; height: 100%;">
+                    <img src="https://ai-public.mastergo.com/gen_page/map_placeholder_1280x720.png" style="width: 100%; height: 100%; object-fit: cover; display: block;" alt="地图" loading="eager">
+                    
+                    <!-- 用户定位标记 -->
+                    <div class="user-location">
+                        <div class="location-dot"></div>
+                    </div>
+                    
+                    <!-- 地图标记 -->
+                    <div class="map-marker" style="left: 50%; top: 30%;" onclick="showToiletInfo('公共厕所（国贸中心）', '建国路88号国贸中心B1层', '开放中', '24小时开放', '4.5分 (128条评价)', '免费 | 无障碍 | 有纸')">
+                        <div class="marker-icon">🚻</div>
+                        <div class="marker-distance">32m</div>
+                    </div>
+                    <div class="map-marker" style="left: 30%; top: 60%;" onclick="showToiletInfo('商场厕所（银泰中心）', '建国门外大街2号银泰中心3层', '拥挤', '10:00-22:00', '4.2分 (86条评价)', '免费 | 无障碍 | 有纸')">
+                        <div class="marker-icon">🏬</div>
+                        <div class="marker-distance">120m</div>
+                    </div>
+                    <div class="map-marker" style="left: 70%; top: 40%;" onclick="showToiletInfo('景区厕所（朝阳公园）', '朝阳公园南门内100米', '维修中', '08:00-18:00', '3.8分 (52条评价)', '免费 | 无障碍')">
+                        <div class="marker-icon">🏞️</div>
+                        <div class="marker-distance">85m</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 厕所信息卡片（默认隐藏，点击地图标记后显示） -->
+            <div id="toilet-info-card" class="toilet-card" style="display: none; position: absolute; bottom: 90px; left: 16px; right: 16px; z-index: 80; animation: slideUp 0.3s ease-out;">
+                <span class="prd-badge" onmouseenter="showTooltip(3, event)" onmouseleave="hideTooltip(3)">3</span>
+                <div class="toilet-card-header" style="position: relative;">
+                    <div class="toilet-card-name" id="info-card-name">公共厕所（国贸中心）</div>
+                    <div class="toilet-card-status status-open" id="info-card-status">开放中</div>
+                    <button class="close-button" onclick="closeToiletInfo()" style="position: absolute; top: 0; right: 0; background: none; border: none; font-size: 16px; color: #999; cursor: pointer; padding: 4px;">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <div class="toilet-card-info">
+                    <div class="info-item">
+                        <i class="fa fa-map-marker"></i>
+                        <span id="info-card-address">建国路88号国贸中心B1层</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa fa-clock-o"></i>
+                        <span id="info-card-hours">24小时开放</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa fa-star"></i>
+                        <span id="info-card-rating">4.5分 (128条评价)</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa fa-check-circle"></i>
+                        <span id="info-card-facilities">免费 | 无障碍 | 有纸</span>
+                    </div>
+                </div>
+                <div class="toilet-card-actions">
+                    <div class="card-action-btn" onclick="showDetailPage()">查看详情</div>
+                    <div class="card-action-btn primary" onclick="navigateToToilet(document.getElementById('info-card-name').textContent, '32m')">导航</div>
+                </div>
+            </div>
+            
+            <!-- 筛选工具栏 -->
+            <div class="filter-bar">
+                <span class="prd-badge" onmouseenter="showTooltip(4, event)" onmouseleave="hideTooltip(4)" style="position: absolute; top: -10px; right: 10px;">4</span>
+                <div class="filter-tags">
+                    <div class="filter-tag active" onclick="switchFilter(this)">距离优先</div>
+                    <div class="filter-tag" onclick="switchFilter(this)">免费</div>
+                    <div class="filter-tag" onclick="switchFilter(this)">无障碍</div>
+                    <div class="filter-tag" onclick="switchFilter(this)">有纸</div>
+                    <div class="filter-tag" onclick="switchFilter(this)">开放中</div>
+                    <div class="filter-tag clear-filter" onclick="clearFilters()" style="margin-left: 8px; border: 1px solid #ff5722; color: #ff5722; background-color: white;">
+                        <i class="fa fa-times"></i> 清除
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 排行榜页面 -->
+        <div id="ranking-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(10, event)" onmouseleave="hideTooltip(10)">10</span>
+                <div class="logo-section">
+                    <div class="app-name">排行榜</div>
+                </div>
+                <div class="location-section">
+                    <div class="location-text">北京市</div>
+                </div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <!-- 排行榜Tab栏 -->
+            <div style="background-color: white; padding: 0 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="display: flex; border-bottom: 1px solid #e0e0e0;">
+                    <div class="rank-tab active" onclick="switchRankTab('top')" style="flex: 1; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 500; color: #ff5722; border-bottom: 2px solid #ff5722;">夯榜</div>
+                    <div class="rank-tab" onclick="switchRankTab('bottom')" style="flex: 1; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 500; color: #666;">拉榜</div>
+                </div>
+            </div>
+            
+            <!-- 排行榜内容 -->
+            <div id="rank-content" style="padding: 16px;">
+                <!-- 夯榜内容 -->
+                <div id="top-rank" style="display: block;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">北京市Top10厕所</h3>
+                    
+                    <div class="rank-item" style="background-color: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer;" onclick="showDetailPageFromRank('公共厕所（国贸中心）', '建国路88号国贸中心B1层', '开放中', '24小时开放', '4.9分 (128条评价)', '免费 | 无障碍 | 有纸')">
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <div style="width: 24px; height: 24px; background-color: #ff5722; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px;">1</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">公共厕所（国贸中心）</div>
+                                <div style="font-size: 14px; color: #666;">建国路88号国贸中心B1层</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: 600; color: #ff5722;">4.9</div>
+                                <div style="font-size: 12px; color: #999;">128条评价</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">免费</span>
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">无障碍</span>
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">有纸</span>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-item" style="background-color: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer;" onclick="showDetailPageFromRank('商场厕所（银泰中心）', '建国门外大街2号银泰中心3层', '开放中', '10:00-22:00', '4.7分 (86条评价)', '免费 | 无障碍 | 有纸')">
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <div style="width: 24px; height: 24px; background-color: #ff9800; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px;">2</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">商场厕所（银泰中心）</div>
+                                <div style="font-size: 14px; color: #666;">建国门外大街2号银泰中心3层</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: 600; color: #ff5722;">4.7</div>
+                                <div style="font-size: 12px; color: #999;">86条评价</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">免费</span>
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">无障碍</span>
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">有纸</span>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-item" style="background-color: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer;" onclick="showDetailPageFromRank('景区厕所（朝阳公园）', '朝阳公园南门内100米', '开放中', '08:00-18:00', '4.5分 (52条评价)', '免费 | 无障碍')">
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <div style="width: 24px; height: 24px; background-color: #ffc107; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px;">3</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">景区厕所（朝阳公园）</div>
+                                <div style="font-size: 14px; color: #666;">朝阳公园南门内100米</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: 600; color: #ff5722;">4.5</div>
+                                <div style="font-size: 12px; color: #999;">52条评价</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">免费</span>
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">无障碍</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 拉榜内容 -->
+                <div id="bottom-rank" style="display: none;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">北京市需改进厕所</h3>
+                    
+                    <div class="rank-item" style="background-color: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer;" onclick="showDetailPageFromRank('公共厕所（北京站）', '北京站广场西侧', '开放中', '24小时开放', '2.1分 (35条评价)', '收费 | 无纸')">
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <div style="width: 24px; height: 24px; background-color: #9e9e9e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px;">1</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">公共厕所（北京站）</div>
+                                <div style="font-size: 14px; color: #666;">北京站广场西侧</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: 600; color: #9e9e9e;">2.1</div>
+                                <div style="font-size: 12px; color: #999;">35条评价</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">收费</span>
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">无纸</span>
+                        </div>
+                    </div>
+                    
+                    <div class="rank-item" style="background-color: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer;" onclick="showDetailPageFromRank('公共厕所（王府井）', '王府井步行街', '开放中', '09:00-22:00', '2.5分 (28条评价)', '免费 | 无纸')">
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <div style="width: 24px; height: 24px; background-color: #9e9e9e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px;">2</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">公共厕所（王府井）</div>
+                                <div style="font-size: 14px; color: #666;">王府井步行街</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 16px; font-weight: 600; color: #9e9e9e;">2.5</div>
+                                <div style="font-size: 12px; color: #999;">28条评价</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">免费</span>
+                            <span style="font-size: 12px; background-color: #f0f0f0; padding: 2px 8px; border-radius: 10px;">无纸</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 我的页面 -->
+        <div id="my-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(11, event)" onmouseleave="hideTooltip(11)">11</span>
+                <div class="logo-section">
+                    <div class="app-name">我的</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <!-- 个人信息 -->
+            <div style="background-color: #ff5722; color: white; padding: 24px 16px;">
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 64px; height: 64px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 16px;">👤</div>
+                    <div>
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">用户</div>
+                        <div style="font-size: 14px; opacity: 0.9;">点击登录</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 功能列表 -->
+            <div style="background-color: white; margin: 12px 0;">
+                <div class="my-item" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer;" onclick="showPage('history-page')">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fa fa-history" style="font-size: 20px; color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 16px;">历史导航</span>
+                    </div>
+                    <i class="fa fa-chevron-right" style="font-size: 14px; color: #999;"></i>
+                </div>
+                <div class="my-item" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer;" onclick="showPage('favorite-page')">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fa fa-star" style="font-size: 20px; color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 16px;">我的收藏</span>
+                    </div>
+                    <i class="fa fa-chevron-right" style="font-size: 14px; color: #999;"></i>
+                </div>
+                <div class="my-item" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; cursor: pointer;" onclick="showPage('settings-page')">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fa fa-cog" style="font-size: 20px; color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 16px;">设置</span>
+                    </div>
+                    <i class="fa fa-chevron-right" style="font-size: 14px; color: #999;"></i>
+                </div>
+            </div>
+            
+            <!-- 其他功能 -->
+            <div style="background-color: white; margin: 12px 0;">
+                <div class="my-item" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer;" onclick="showPage('guide-page')">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fa fa-book" style="font-size: 20px; color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 16px;">使用指南</span>
+                    </div>
+                    <i class="fa fa-chevron-right" style="font-size: 14px; color: #999;"></i>
+                </div>
+                <div class="my-item" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer;" onclick="showPage('feedback-page')">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fa fa-question-circle" style="font-size: 20px; color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 16px;">帮助与反馈</span>
+                    </div>
+                    <i class="fa fa-chevron-right" style="font-size: 14px; color: #999;"></i>
+                </div>
+                <div class="my-item" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; cursor: pointer;" onclick="showPage('about-page')">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fa fa-info-circle" style="font-size: 20px; color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 16px;">关于我们</span>
+                    </div>
+                    <i class="fa fa-chevron-right" style="font-size: 14px; color: #999;"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 评价页面 -->
+        <div id="review-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(9, event)" onmouseleave="hideTooltip(9)">9</span>
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('home-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">厕所评价</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div class="review-page">
+                <!-- 厕所信息 -->
+                <div class="review-header">
+                    <div class="review-toilet-name" id="review-toilet-name">公共厕所（国贸中心）</div>
+                    <div class="review-toilet-info" id="review-toilet-address">
+                        <i class="fa fa-map-marker"></i> 建国路88号国贸中心B1层
+                    </div>
+                </div>
+                
+                <!-- 评分区域 -->
+                <div class="rating-section">
+                    <div class="rating-title">整体评分</div>
+                    <div class="large-stars" id="rating-stars">
+                        <i class="fa fa-star-o" onclick="setRating(1)"></i>
+                        <i class="fa fa-star-o" onclick="setRating(2)"></i>
+                        <i class="fa fa-star-o" onclick="setRating(3)"></i>
+                        <i class="fa fa-star-o" onclick="setRating(4)"></i>
+                        <i class="fa fa-star-o" onclick="setRating(5)"></i>
+                    </div>
+                    <div class="rating-hint" style="font-size: 12px; color: #999; margin-top: 8px;">点击星星进行评分</div>
+                </div>
+                
+                <!-- 评价内容 -->
+                <div class="review-form">
+                    <div class="form-group">
+                        <label class="form-label">评价内容</label>
+                        <textarea class="form-textarea" id="review-content" placeholder="请分享您对这个厕所的体验..."></textarea>
+                        <div class="char-count" style="text-align: right; font-size: 12px; color: #999; margin-top: 8px;">
+                            <span id="review-length">0</span>/500
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 图片上传 -->
+                <div class="photo-upload">
+                    <div class="photo-upload-title">添加图片（选填）</div>
+                    <div class="upload-list" id="upload-list">
+                        <div class="upload-item" onclick="addPhoto()">
+                            <i class="fa fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="upload-hint" style="font-size: 12px; color: #999; margin-top: 8px;">
+                        最多可上传3张图片
+                    </div>
+                </div>
+                
+                <!-- 提交按钮 -->
+                <button class="submit-btn" onclick="submitReview()">提交评价</button>
+            </div>
+        </div>
+        
+        <!-- 厕所详情页面 -->
+        <div id="detail-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(6, event)" onmouseleave="hideTooltip(6)">6</span>
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('home-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">厕所详情</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div class="detail-content" style="padding: 16px;">
+                <!-- 厕所基本信息 -->
+                <div class="detail-card" style="background-color: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                        <div>
+                            <div id="detail-name" style="font-size: 20px; font-weight: 600; color: #333; margin-bottom: 8px;">公共厕所（国贸中心）</div>
+                            <div id="detail-address" style="font-size: 14px; color: #666; display: flex; align-items: center;">
+                                <i class="fa fa-map-marker" style="color: #ff5722; margin-right: 8px;"></i>
+                                建国路88号国贸中心B1层
+                            </div>
+                            <div id="detail-distance" style="display: none;">32m</div>
+                        </div>
+                        <div id="detail-status" class="toilet-card-status status-open" style="padding: 4px 12px;">开放中</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div style="background-color: #f8f9fa; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 4px;">开放时间</div>
+                            <div id="detail-hours" style="font-size: 14px; font-weight: 500;">24小时开放</div>
+                        </div>
+                        <div style="background-color: #f8f9fa; border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 4px;">评分</div>
+                            <div id="detail-rating" style="font-size: 14px; font-weight: 500; color: #ff5722;">4.5分</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 设施信息 -->
+                <div class="detail-card" style="background-color: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="font-size: 16px; font-weight: 600; color: #333; margin-bottom: 12px;">设施信息</div>
+                    <div id="detail-facilities" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span style="font-size: 12px; background-color: #e8f5e8; color: #4caf50; padding: 4px 12px; border-radius: 16px;">免费</span>
+                        <span style="font-size: 12px; background-color: #e3f2fd; color: #1976d2; padding: 4px 12px; border-radius: 16px;">无障碍</span>
+                        <span style="font-size: 12px; background-color: #f3e5f5; color: #7b1fa2; padding: 4px 12px; border-radius: 16px;">有纸</span>
+                    </div>
+                </div>
+                
+                <!-- 用户评价 -->
+                <div class="detail-card" style="background-color: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div style="font-size: 16px; font-weight: 600; color: #333;">用户评价</div>
+                        <button onclick="showReviewPage(document.getElementById('detail-name').textContent)" style="font-size: 14px; color: #ff5722; background: none; border: none; cursor: pointer;">
+                            <i class="fa fa-pencil"></i> 写评价
+                        </button>
+                    </div>
+                    
+                    <div class="review-list">
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                            <div style="width: 40px; height: 40px; background-color: #ff5722; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold; margin-right: 12px;">张</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <span style="font-size: 14px; font-weight: 500;">张先生</span>
+                                    <span style="color: #ffc107;">★★★★★</span>
+                                </div>
+                                <div style="font-size: 14px; color: #666;">环境很干净，设施齐全，值得推荐！</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 4px;">2024-01-15</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                            <div style="width: 40px; height: 40px; background-color: #4caf50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold; margin-right: 12px;">李</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <span style="font-size: 14px; font-weight: 500;">李女士</span>
+                                    <span style="color: #ffc107;">★★★★☆</span>
+                                </div>
+                                <div style="font-size: 14px; color: #666;">位置很好找，就是高峰期需要排队。</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 4px;">2024-01-14</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; padding: 12px 0;">
+                            <div style="width: 40px; height: 40px; background-color: #2196f3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold; margin-right: 12px;">王</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <span style="font-size: 14px; font-weight: 500;">王先生</span>
+                                    <span style="color: #ffc107;">★★★★★</span>
+                                </div>
+                                <div style="font-size: 14px; color: #666;">卫生间很干净，有免费纸巾，点赞！</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 4px;">2024-01-13</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 操作按钮 -->
+                <div style="display: flex; gap: 12px; padding-bottom: 80px;">
+                    <button onclick="showReviewPage(document.getElementById('detail-name').textContent)" style="flex: 1; padding: 14px; border: 1px solid #ff5722; border-radius: 8px; font-size: 16px; color: #ff5722; background-color: white; cursor: pointer; transition: background-color 0.3s ease;">
+                        <i class="fa fa-star"></i> 评价
+                    </button>
+                    <button onclick="navigateToToilet(document.getElementById('detail-name').textContent, document.getElementById('detail-distance').textContent)" style="flex: 1; padding: 14px; background-color: #ff5722; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
+                        <i class="fa fa-location-arrow"></i> 导航
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 导航页面 -->
+        <div id="navigation-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(7, event)" onmouseleave="hideTooltip(7)">7</span>
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('home-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">导航</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div class="navigation-page" style="height: calc(100% - 60px); overflow: hidden;">
+                <div class="navigation-map" style="height: 100%; width: 100%;">
+                    <img src="https://ai-public.mastergo.com/gen_page/map_placeholder_1280x720.png" style="width: 100%; height: 100%; object-fit: cover; display: block;" alt="导航地图">
+                </div>
+                
+                <div class="navigation-info" style="position: absolute; bottom: 90px; left: 16px; right: 16px; background-color: white; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateZ(0);">
+                    <span class="prd-badge" onmouseenter="showTooltip(8, event)" onmouseleave="hideTooltip(8)">8</span>
+                    <div class="nav-toilet-name" id="nav-toilet-name">公共厕所（国贸中心）</div>
+                    <div class="nav-distance" id="nav-distance">距离：32m</div>
+                    <div class="nav-eta">预计步行时间：2分钟</div>
+                    <div class="nav-actions" style="display: flex; gap: 8px; margin-top: 16px;">
+                        <div class="nav-btn" style="flex: 1; padding: 12px; border: 1px solid #ff5722; border-radius: 8px; font-size: 14px; text-align: center;">
+                            <i class="fa fa-compass"></i> 指南针
+                        </div>
+                        <div class="nav-btn primary" style="flex: 1; padding: 12px; background-color: #ff5722; color: white; border: 1px solid #ff5722; border-radius: 8px; font-size: 14px; text-align: center;">
+                            <i class="fa fa-location-arrow"></i> 开始导航
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 搜索页面 -->
+        <div id="search-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(5, event)" onmouseleave="hideTooltip(5)">5</span>
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('home-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">搜索厕所</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div class="search-page">
+                <div class="search-bar">
+                    <input type="text" id="search-input" class="search-input" placeholder="搜索厕所名称或地址..." onkeyup="handleSearchKeyup(event)">
+                    <button class="search-btn" onclick="performSearch()">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+                
+                <div class="search-history">
+                    <div class="history-title">搜索历史</div>
+                    <div class="history-tags">
+                        <div class="history-tag" onclick="searchByKeyword('国贸')">国贸</div>
+                        <div class="history-tag" onclick="searchByKeyword('银泰')">银泰</div>
+                        <div class="history-tag" onclick="searchByKeyword('朝阳公园')">朝阳公园</div>
+                    </div>
+                </div>
+                
+                <div id="search-results" class="search-results" style="display: none;">
+                    <div class="search-result-item" onclick="showToiletInfo('公共厕所（国贸中心）', '建国路88号国贸中心B1层', '开放中', '24小时开放', '4.5分 (128条评价)', '免费 | 无障碍 | 有纸')">
+                        <div class="search-result-name">公共厕所（国贸中心）</div>
+                        <div class="search-result-info"><i class="fa fa-map-marker"></i>建国路88号国贸中心B1层</div>
+                        <div class="search-result-info"><i class="fa fa-clock-o"></i>24小时开放</div>
+                        <div class="search-result-tags">
+                            <span>免费</span>
+                            <span>无障碍</span>
+                            <span>有纸</span>
+                        </div>
+                    </div>
+                    <div class="search-result-item" onclick="showToiletInfo('商场厕所（银泰中心）', '建国门外大街2号银泰中心3层', '拥挤', '10:00-22:00', '4.2分 (86条评价)', '免费 | 无障碍 | 有纸')">
+                        <div class="search-result-name">商场厕所（银泰中心）</div>
+                        <div class="search-result-info"><i class="fa fa-map-marker"></i>建国门外大街2号银泰中心3层</div>
+                        <div class="search-result-info"><i class="fa fa-clock-o"></i>10:00-22:00</div>
+                        <div class="search-result-tags">
+                            <span>免费</span>
+                            <span>无障碍</span>
+                            <span>有纸</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 历史导航页面 -->
+        <div id="history-page" class="page">
+            <div class="top-bar">
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('my-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">历史导航</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div class="list-page">
+                <div class="list-empty">
+                    <i class="fa fa-history list-empty-icon"></i>
+                    <div class="list-empty-text">暂无导航记录</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 收藏页面 -->
+        <div id="favorite-page" class="page">
+            <div class="top-bar">
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('my-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">我的收藏</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div class="list-page">
+                <div class="list-empty">
+                    <i class="fa fa-star-o list-empty-icon"></i>
+                    <div class="list-empty-text">暂无收藏的厕所</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 设置页面 -->
+        <div id="settings-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(12, event)" onmouseleave="hideTooltip(12)">12</span>
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('my-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">设置</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div style="background-color: white; margin-top: 12px;">
+                <div class="settings-item" onclick="toggleNotification()">
+                    <span class="settings-label">消息通知</span>
+                    <div id="notification-switch" class="settings-switch active"></div>
+                </div>
+                <div class="settings-item" onclick="toggleSound()">
+                    <span class="settings-label">提示音</span>
+                    <div id="sound-switch" class="settings-switch"></div>
+                </div>
+                <div class="settings-item" onclick="showPage('guide-page')">
+                    <span class="settings-label">使用指南</span>
+                    <i class="fa fa-chevron-right" style="font-size: 14px; color: #999;"></i>
+                </div>
+                <div class="settings-item" onclick="showPage('feedback-page')">
+                    <span class="settings-label">帮助与反馈</span>
+                    <i class="fa fa-chevron-right" style="font-size: 14px; color: #999;"></i>
+                </div>
+                <div class="settings-item" onclick="showPage('about-page')">
+                    <span class="settings-label">关于我们</span>
+                    <i class="fa fa-chevron-right" style="font-size: 14px; color: #999;"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 使用指南页面 -->
+        <div id="guide-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(13, event)" onmouseleave="hideTooltip(13)">13</span>
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('my-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">使用指南</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div class="guide-page">
+                <div class="guide-section">
+                    <div class="guide-title">如何查找厕所</div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">1</div>
+                        <div class="guide-step-content">打开应用后，首页会自动定位您的当前位置</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">2</div>
+                        <div class="guide-step-content">地图上会显示附近的厕所标记，点击标记查看详情</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">3</div>
+                        <div class="guide-step-content">使用筛选功能筛选符合需求的厕所</div>
+                    </div>
+                </div>
+                
+                <div class="guide-section">
+                    <div class="guide-title">如何导航</div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">1</div>
+                        <div class="guide-step-content">点击厕所卡片上的「导航」按钮</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">2</div>
+                        <div class="guide-step-content">进入导航页面后点击「开始导航」</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">3</div>
+                        <div class="guide-step-content">按照导航指引前往目的地</div>
+                    </div>
+                </div>
+                
+                <div class="guide-section">
+                    <div class="guide-title">如何评价</div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">1</div>
+                        <div class="guide-step-content">在厕所详情页面点击「写评价」</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">2</div>
+                        <div class="guide-step-content">选择星级评分并填写评价内容</div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-number">3</div>
+                        <div class="guide-step-content">可选择添加图片，点击提交即可</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 帮助与反馈页面 -->
+        <div id="feedback-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(14, event)" onmouseleave="hideTooltip(14)">14</span>
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('my-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">帮助与反馈</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div class="feedback-page">
+                <div class="feedback-form">
+                    <label class="feedback-label">反馈内容</label>
+                    <textarea class="feedback-textarea" id="feedback-content" placeholder="请描述您遇到的问题或建议..."></textarea>
+                    <button class="submit-btn" style="margin-top: 16px;" onclick="submitFeedback()">提交反馈</button>
+                </div>
+                
+                <div class="contact-info">
+                    <div class="contact-title">联系方式</div>
+                    <div class="contact-item"><i class="fa fa-envelope" style="color: #ff5722; margin-right: 8px;"></i>feedback@qunae.com</div>
+                    <div class="contact-item"><i class="fa fa-phone" style="color: #ff5722; margin-right: 8px;"></i>400-888-8888</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 关于我们页面 -->
+        <div id="about-page" class="page">
+            <div class="top-bar" style="position: relative;">
+                <span class="prd-badge" onmouseenter="showTooltip(15, event)" onmouseleave="hideTooltip(15)">15</span>
+                <div class="logo-section">
+                    <button class="help-btn" onclick="showPage('my-page')">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <div class="app-name">关于我们</div>
+                </div>
+                <div class="location-section"></div>
+                <div style="width: 24px;"></div>
+            </div>
+            
+            <div class="about-page">
+                <div class="about-section">
+                    <div class="about-title">关于去哪屙</div>
+                    <div class="about-content">
+                        「去哪屙」是一款专注于帮助用户快速找到附近厕所的小程序应用。我们致力于解决人们在外出时"找厕所难"的痛点，提供便捷、准确的厕所定位和导航服务。
+                    </div>
+                </div>
+                
+                <div class="about-section">
+                    <div class="about-title">功能特色</div>
+                    <div class="about-content">
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>实时定位，快速查找附近厕所</li>
+                            <li>多种筛选条件，精准匹配需求</li>
+                            <li>智能导航，一键直达目的地</li>
+                            <li>用户评价，分享真实体验</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="about-section">
+                    <div class="about-title">用户协议</div>
+                    <div class="about-content">
+                        使用本应用即表示您同意我们的用户协议和隐私政策。我们承诺保护您的个人信息安全，不会泄露任何敏感数据。
+                    </div>
+                </div>
+                
+                <div class="about-version">版本号：v1.0.0</div>
+            </div>
+        </div>
+        
+        <!-- 底部导航栏 -->
+        <div class="bottom-nav" style="position: relative;">
+            <span class="prd-badge" onmouseenter="showTooltip(16, event)" onmouseleave="hideTooltip(16)">16</span>
+            <div class="nav-item active" onclick="showPage('home-page')">
+                <i class="fa fa-map-marker"></i>
+                <span>找厕所</span>
+            </div>
+            <div class="nav-item" onclick="showPage('ranking-page')">
+                <i class="fa fa-trophy"></i>
+                <span>排行榜</span>
+            </div>
+            <div class="nav-item" onclick="showPage('my-page')">
+                <i class="fa fa-user"></i>
+                <span>我的</span>
+            </div>
+        </div>
+        
+        <!-- 首次使用引导模态框 -->
+        <div id="onboarding-modal" class="onboarding-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.8); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+            <div class="onboarding-content" style="background-color: white; border-radius: 12px; padding: 24px; max-width: 320px; text-align: center;">
+                <div class="onboarding-logo" style="font-size: 48px; margin-bottom: 16px;">🚽</div>
+                <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 16px; color: #333;">欢迎使用去哪屙</h2>
+                <p style="font-size: 14px; color: #666; margin-bottom: 24px; line-height: 1.5;">快速找到附近的厕所，解决您的紧急需求</p>
+                <div class="onboarding-features" style="margin-bottom: 24px; text-align: left;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <i class="fa fa-map-marker" style="color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 14px;">查看附近厕所位置</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <i class="fa fa-filter" style="color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 14px;">筛选厕所条件</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <i class="fa fa-location-arrow" style="color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 14px;">导航到厕所</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <i class="fa fa-star" style="color: #ff5722; margin-right: 12px;"></i>
+                        <span style="font-size: 14px;">评价厕所质量</span>
+                    </div>
+                </div>
+                <button id="start-using" class="start-button" style="width: 100%; padding: 12px; background-color: #ff5722; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer; transition: background-color 0.3s ease;">
+                    开始使用
+                </button>
+                <div style="margin-top: 16px;">
+                    <button id="skip-onboarding" style="background: none; border: none; color: #666; font-size: 14px; cursor: pointer;">
+                        跳过
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 当前评分
+        let currentRating = 0;
+        
+        // 显示指定页面
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示选中页面
+            document.getElementById(pageId).classList.add('active');
+            
+            // 更新底部导航栏状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 激活对应导航项
+            if (pageId === 'home-page') {
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+            } else if (pageId === 'ranking-page') {
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+            } else if (pageId === 'my-page') {
+                document.querySelectorAll('.nav-item')[2].classList.add('active');
+            }
+        }
+        
+        // 切换排行榜Tab
+        function switchRankTab(type) {
+            // 隐藏所有排行榜内容
+            document.getElementById('top-rank').style.display = 'none';
+            document.getElementById('bottom-rank').style.display = 'none';
+            
+            // 显示选中的排行榜
+            if (type === 'top') {
+                document.getElementById('top-rank').style.display = 'block';
+            } else if (type === 'bottom') {
+                document.getElementById('bottom-rank').style.display = 'block';
+            }
+            
+            // 更新Tab样式
+            document.querySelectorAll('.rank-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.style.color = '#666';
+                tab.style.borderBottom = 'none';
+            });
+            
+            // 激活选中的Tab
+            event.currentTarget.classList.add('active');
+            event.currentTarget.style.color = '#ff5722';
+            event.currentTarget.style.borderBottom = '2px solid #ff5722';
+        }
+        
+        // 切换筛选标签
+        function switchFilter(element) {
+            // 移除所有按钮的激活样式
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            
+            // 为当前点击的按钮添加激活样式
+            element.classList.add('active');
+        }
+        
+        // 清除筛选
+        function clearFilters() {
+            // 移除所有按钮的激活样式
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            
+            // 重新激活默认选项
+            document.querySelector('.filter-tag:first-child').classList.add('active');
+            
+            // 模拟刷新地图数据
+            alert('筛选已清除，显示所有厕所');
+        }
+        
+        // 从排行榜进入详情页面
+        function showDetailPageFromRank(name, address, status, hours, rating, facilities) {
+            // 更新详情页面内容
+            document.getElementById('detail-name').textContent = name;
+            document.getElementById('detail-address').innerHTML = `<i class="fa fa-map-marker" style="color: #ff5722; margin-right: 8px;"></i>${address}`;
+            document.getElementById('detail-hours').textContent = hours;
+            
+            // 提取评分数字
+            const ratingMatch = rating.match(/[\d.]+/);
+            document.getElementById('detail-rating').textContent = ratingMatch ? `${ratingMatch[0]}分` : '暂无评分';
+            
+            // 更新状态样式
+            const statusElement = document.getElementById('detail-status');
+            statusElement.textContent = status;
+            statusElement.classList.remove('status-open', 'status-closed', 'status-busy');
+            if (status === '开放中') {
+                statusElement.classList.add('status-open');
+            } else if (status === '维修中') {
+                statusElement.classList.add('status-closed');
+            } else if (status === '拥挤') {
+                statusElement.classList.add('status-busy');
+            }
+            
+            // 更新设施标签
+            const facilityTags = facilities.split(' | ');
+            const facilityContainer = document.getElementById('detail-facilities');
+            facilityContainer.innerHTML = '';
+            
+            const facilityColors = {
+                '免费': { bg: '#e8f5e8', color: '#4caf50' },
+                '无障碍': { bg: '#e3f2fd', color: '#1976d2' },
+                '有纸': { bg: '#f3e5f5', color: '#7b1fa2' },
+                '收费': { bg: '#ffebee', color: '#c62828' },
+                '无纸': { bg: '#fff3e0', color: '#ff8f00' }
+            };
+            
+            facilityTags.forEach(tag => {
+                const span = document.createElement('span');
+                span.style.fontSize = '12px';
+                span.style.padding = '4px 12px';
+                span.style.borderRadius = '16px';
+                span.style.marginRight = '8px';
+                span.style.marginBottom = '8px';
+                
+                const color = facilityColors[tag] || { bg: '#f0f0f0', color: '#666' };
+                span.style.backgroundColor = color.bg;
+                span.style.color = color.color;
+                span.textContent = tag;
+                
+                facilityContainer.appendChild(span);
+            });
+            
+            // 显示详情页面
+            showPage('detail-page');
+        }
+        
+        // 显示评价页面
+        function showReviewPage(toiletName) {
+            document.getElementById('review-toilet-name').textContent = toiletName;
+            
+            // 尝试从详情页面获取地址信息
+            const detailAddress = document.getElementById('detail-address');
+            if (detailAddress) {
+                const addressText = detailAddress.textContent.replace(/[\n\r]/g, '').trim();
+                if (addressText) {
+                    document.getElementById('review-toilet-address').innerHTML = `<i class="fa fa-map-marker"></i> ${addressText}`;
+                }
+            }
+            
+            showPage('review-page');
+            // 重置评分
+            resetRating();
+            // 重置评价内容
+            document.getElementById('review-content').value = '';
+            document.getElementById('review-length').textContent = '0';
+            // 重置图片列表
+            resetPhotos();
+        }
+        
+        // 添加图片（模拟）
+        function addPhoto() {
+            const uploadList = document.getElementById('upload-list');
+            const photoCount = uploadList.querySelectorAll('.upload-item.has-image').length;
+            
+            if (photoCount >= 3) {
+                alert('最多只能上传3张图片');
+                return;
+            }
+            
+            // 创建模拟图片
+            const colors = ['#ff5722', '#4caf50', '#2196f3', '#9c27b0'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            const imageItem = document.createElement('div');
+            imageItem.className = 'upload-item has-image';
+            imageItem.innerHTML = `
+                <div style="width: 100%; height: 100%; background: ${randomColor}; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">
+                    图片${photoCount + 1}
+                </div>
+                <div class="remove-photo" onclick="removePhoto(this)">×</div>
+            `;
+            
+            // 在添加按钮之前插入
+            const addButton = uploadList.querySelector('.upload-item:not(.has-image)');
+            uploadList.insertBefore(imageItem, addButton);
+            
+            // 如果已经有3张图片，隐藏添加按钮
+            if (photoCount + 1 >= 3) {
+                addButton.style.display = 'none';
+            }
+        }
+        
+        // 移除图片
+        function removePhoto(element) {
+            const item = element.parentElement;
+            const uploadList = document.getElementById('upload-list');
+            uploadList.removeChild(item);
+            
+            // 显示添加按钮
+            const addButton = uploadList.querySelector('.upload-item:not(.has-image)');
+            if (addButton) {
+                addButton.style.display = 'flex';
+            }
+        }
+        
+        // 重置图片列表
+        function resetPhotos() {
+            const uploadList = document.getElementById('upload-list');
+            uploadList.innerHTML = `
+                <div class="upload-item" onclick="addPhoto()">
+                    <i class="fa fa-camera"></i>
+                </div>
+            `;
+        }
+        
+        // 字符计数
+        document.addEventListener('DOMContentLoaded', function() {
+            const reviewContent = document.getElementById('review-content');
+            if (reviewContent) {
+                reviewContent.addEventListener('input', function() {
+                    const length = this.value.length;
+                    document.getElementById('review-length').textContent = length;
+                    
+                    // 限制最大字符数
+                    if (length > 500) {
+                        this.value = this.value.substring(0, 500);
+                        document.getElementById('review-length').textContent = '500';
+                    }
+                });
+            }
+        });
+        
+        // 导航到厕所
+        function navigateToToilet(toiletName, distance) {
+            document.getElementById('nav-toilet-name').textContent = toiletName;
+            document.getElementById('nav-distance').textContent = `距离：${distance}`;
+            showPage('navigation-page');
+        }
+        
+        // 设置评分
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.getElementById('rating-stars').children;
+            
+            for (let i = 0; i < stars.length; i++) {
+                if (i < rating) {
+                    stars[i].className = 'fa fa-star';
+                } else {
+                    stars[i].className = 'fa fa-star-o';
+                }
+            }
+        }
+        
+        // 重置评分
+        function resetRating() {
+            currentRating = 0;
+            const stars = document.getElementById('rating-stars').children;
+            
+            for (let i = 0; i < stars.length; i++) {
+                stars[i].className = 'fa fa-star-o';
+            }
+        }
+        
+        // 提交评价
+        function submitReview() {
+            if (currentRating === 0) {
+                alert('请先给出评分');
+                return;
+            }
+            
+            const reviewText = document.getElementById('review-content').value;
+            if (!reviewText.trim()) {
+                alert('请填写评价内容');
+                return;
+            }
+            
+            // 获取图片数量
+            const photoCount = document.querySelectorAll('.upload-item.has-image').length;
+            
+            // 模拟提交
+            alert(`评价提交成功！\n\n评分：${'★'.repeat(currentRating)}${'☆'.repeat(5 - currentRating)}\n内容：${reviewText}\n图片：${photoCount}张\n\n感谢您的反馈！`);
+            
+            // 返回首页
+            showPage('home-page');
+        }
+        
+        // 地图加载函数
+        function loadMap() {
+            // 显示加载状态
+            document.getElementById('map-loading').style.display = 'flex';
+            document.getElementById('map-content').style.display = 'none';
+            document.getElementById('network-error').style.display = 'none';
+            document.getElementById('empty-state').style.display = 'none';
+            
+            // 模拟网络请求
+            setTimeout(() => {
+                // 随机模拟成功或失败
+                const success = Math.random() > 0.1; // 90%成功率
+                
+                if (success) {
+                    // 加载成功
+                    document.getElementById('map-loading').style.display = 'none';
+                    document.getElementById('map-content').style.display = 'block';
+                } else {
+                    // 加载失败
+                    document.getElementById('map-loading').style.display = 'none';
+                    document.getElementById('network-error').style.display = 'flex';
+                }
+            }, 1500);
+        }
+        
+        // 重试加载地图
+        function retryLoadMap() {
+            loadMap();
+        }
+        
+        // 显示厕所信息卡片
+        function showToiletInfo(name, address, status, hours, rating, facilities) {
+            // 更新卡片内容
+            document.getElementById('info-card-name').textContent = name;
+            document.getElementById('info-card-address').textContent = address;
+            document.getElementById('info-card-hours').textContent = hours;
+            document.getElementById('info-card-rating').textContent = rating;
+            document.getElementById('info-card-facilities').textContent = facilities;
+            
+            // 更新状态样式
+            const statusElement = document.getElementById('info-card-status');
+            statusElement.textContent = status;
+            
+            // 移除所有状态类
+            statusElement.classList.remove('status-open', 'status-closed', 'status-busy');
+            
+            // 添加对应状态类
+            if (status === '开放中') {
+                statusElement.classList.add('status-open');
+            } else if (status === '维修中') {
+                statusElement.classList.add('status-closed');
+            } else if (status === '拥挤') {
+                statusElement.classList.add('status-busy');
+            }
+            
+            // 显示卡片
+            document.getElementById('toilet-info-card').style.display = 'block';
+        }
+        
+        // 关闭厕所信息卡片
+        function closeToiletInfo() {
+            document.getElementById('toilet-info-card').style.display = 'none';
+        }
+        
+        // 显示厕所详情页面
+        function showDetailPage() {
+            // 从信息卡片获取数据
+            const name = document.getElementById('info-card-name').textContent;
+            const address = document.getElementById('info-card-address').textContent;
+            const status = document.getElementById('info-card-status').textContent;
+            const hours = document.getElementById('info-card-hours').textContent;
+            const rating = document.getElementById('info-card-rating').textContent;
+            const facilities = document.getElementById('info-card-facilities').textContent;
+            
+            // 更新详情页面内容
+            document.getElementById('detail-name').textContent = name;
+            document.getElementById('detail-address').innerHTML = `<i class="fa fa-map-marker" style="color: #ff5722; margin-right: 8px;"></i>${address}`;
+            document.getElementById('detail-hours').textContent = hours;
+            
+            // 获取当前选中标记的距离
+            const markers = document.querySelectorAll('.map-marker');
+            let distance = '未知';
+            markers.forEach(marker => {
+                const markerIcon = marker.querySelector('.marker-icon');
+                const markerDistance = marker.querySelector('.marker-distance');
+                if (markerDistance) {
+                    distance = markerDistance.textContent;
+                }
+            });
+            document.getElementById('detail-distance').textContent = distance;
+            
+            // 提取评分数字
+            const ratingMatch = rating.match(/[\d.]+/);
+            document.getElementById('detail-rating').textContent = ratingMatch ? `${ratingMatch[0]}分` : '暂无评分';
+            
+            // 更新状态样式
+            const statusElement = document.getElementById('detail-status');
+            statusElement.textContent = status;
+            statusElement.classList.remove('status-open', 'status-closed', 'status-busy');
+            if (status === '开放中') {
+                statusElement.classList.add('status-open');
+            } else if (status === '维修中') {
+                statusElement.classList.add('status-closed');
+            } else if (status === '拥挤') {
+                statusElement.classList.add('status-busy');
+            }
+            
+            // 更新设施标签
+            const facilityTags = facilities.split(' | ');
+            const facilityContainer = document.getElementById('detail-facilities');
+            facilityContainer.innerHTML = '';
+            
+            const facilityColors = {
+                '免费': { bg: '#e8f5e8', color: '#4caf50' },
+                '无障碍': { bg: '#e3f2fd', color: '#1976d2' },
+                '有纸': { bg: '#f3e5f5', color: '#7b1fa2' },
+                '收费': { bg: '#ffebee', color: '#c62828' },
+                '无纸': { bg: '#fff3e0', color: '#ff8f00' }
+            };
+            
+            facilityTags.forEach(tag => {
+                const span = document.createElement('span');
+                span.style.fontSize = '12px';
+                span.style.padding = '4px 12px';
+                span.style.borderRadius = '16px';
+                span.style.marginRight = '8px';
+                span.style.marginBottom = '8px';
+                
+                const color = facilityColors[tag] || { bg: '#f0f0f0', color: '#666' };
+                span.style.backgroundColor = color.bg;
+                span.style.color = color.color;
+                span.textContent = tag;
+                
+                facilityContainer.appendChild(span);
+            });
+            
+            // 关闭信息卡片
+            closeToiletInfo();
+            
+            // 显示详情页面
+            showPage('detail-page');
+        }
+        
+        // 搜索功能
+        function performSearch() {
+            const keyword = document.getElementById('search-input').value.trim();
+            if (!keyword) {
+                alert('请输入搜索关键词');
+                return;
+            }
+            
+            document.getElementById('search-results').style.display = 'block';
+        }
+        
+        function handleSearchKeyup(event) {
+            if (event.keyCode === 13) {
+                performSearch();
+            }
+        }
+        
+        function searchByKeyword(keyword) {
+            document.getElementById('search-input').value = keyword;
+            document.getElementById('search-results').style.display = 'block';
+        }
+        
+        // 设置开关切换
+        function toggleNotification() {
+            const switchElement = document.getElementById('notification-switch');
+            switchElement.classList.toggle('active');
+            const isActive = switchElement.classList.contains('active');
+            alert(`消息通知已${isActive ? '开启' : '关闭'}`);
+        }
+        
+        function toggleSound() {
+            const switchElement = document.getElementById('sound-switch');
+            switchElement.classList.toggle('active');
+            const isActive = switchElement.classList.contains('active');
+            alert(`提示音已${isActive ? '开启' : '关闭'}`);
+        }
+        
+        // 提交反馈
+        function submitFeedback() {
+            const content = document.getElementById('feedback-content').value.trim();
+            if (!content) {
+                alert('请填写反馈内容');
+                return;
+            }
+            
+            alert('感谢您的反馈！我们会认真处理您的意见。');
+            document.getElementById('feedback-content').value = '';
+            showPage('my-page');
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            // 检查是否首次使用
+            if (!localStorage.getItem('onboarding-completed')) {
+                // 显示首次使用引导
+                document.getElementById('onboarding-modal').style.display = 'flex';
+            }
+            
+            // 绑定首次使用引导的按钮事件
+            document.getElementById('start-using').addEventListener('click', function() {
+                document.getElementById('onboarding-modal').style.display = 'none';
+                localStorage.setItem('onboarding-completed', 'true');
+                // 加载地图
+                loadMap();
+            });
+            
+            document.getElementById('skip-onboarding').addEventListener('click', function() {
+                document.getElementById('onboarding-modal').style.display = 'none';
+                localStorage.setItem('onboarding-completed', 'true');
+                // 加载地图
+                loadMap();
+            });
+            
+            // 如果已经完成过引导，直接加载地图
+            if (localStorage.getItem('onboarding-completed')) {
+                loadMap();
+            }
+        };
+        
+        
+        
+        // 显示浮窗
+        function showTooltip(id, event) {
+            // 阻止事件冒泡
+            event.stopPropagation();
+            
+            const tooltip = document.getElementById(`tooltip-${id}`);
+            if (tooltip) {
+                // 计算位置
+                const badge = event.target;
+                const rect = badge.getBoundingClientRect();
+                let left = rect.left - 450 - 8;
+                let top = rect.bottom + 8;
+                
+                // 检查是否超出视口
+                if (left < 0) {
+                    left = rect.right + 8;
+                }
+                if (top + tooltip.offsetHeight > window.innerHeight) {
+                    top = rect.top - tooltip.offsetHeight - 8;
+                }
+                
+                // 确保在视口内
+                if (left + 450 > window.innerWidth) {
+                    left = window.innerWidth - 450 - 16;
+                }
+                if (left < 0) left = 16;
+                if (top < 0) top = 16;
+                
+                tooltip.style.left = `${left}px`;
+                tooltip.style.top = `${top}px`;
+                tooltip.style.display = 'block';
+                
+                // 添加点击浮窗内部不触发其他事件
+                tooltip.onclick = function(e) {
+                    e.stopPropagation();
+                };
+                
+                // 启用拖拽功能（只初始化一次）
+                if (!tooltip.draggableInitialized) {
+                    makeDraggable(tooltip);
+                    tooltip.draggableInitialized = true;
+                }
+            }
+        }
+        
+        // 关闭浮窗
+        function closeTooltip(id) {
+            const tooltip = document.getElementById(`tooltip-${id}`);
+            if (tooltip) {
+                tooltip.style.display = 'none';
+            }
+        }
+        
+        // 鼠标离开角标时不关闭浮窗（保持显示）
+        function hideTooltip(id) {
+            // 不执行关闭操作，浮窗只有点击关闭按钮才会关闭
+        }
+        
+        // 使浮窗可拖拽
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const header = element.querySelector('.tooltip-header');
+            
+            if (header) {
+                header.onmousedown = dragMouseDown;
+                header.addEventListener('touchstart', dragTouchStart, { passive: false });
+            }
+            
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // 获取鼠标位置
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+            
+            function dragTouchStart(e) {
+                const touch = e.touches[0];
+                const target = touch.target;
+                // 检查触摸目标是否是关闭按钮，如果是则不阻止默认行为，让点击事件正常触发
+                if (target.classList.contains('tooltip-close') || target.closest('.tooltip-close')) {
+                    return;
+                }
+                e.preventDefault();
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                document.addEventListener('touchend', closeTouchDragElement);
+                document.addEventListener('touchmove', elementTouchDrag);
+            }
+            
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // 计算新位置
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // 设置新位置
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+            
+            function elementTouchDrag(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                // 计算新位置
+                pos1 = pos3 - touch.clientX;
+                pos2 = pos4 - touch.clientY;
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                // 设置新位置
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+            
+            function closeDragElement() {
+                // 停止移动
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+            
+            function closeTouchDragElement() {
+                // 停止触摸移动
+                document.removeEventListener('touchend', closeTouchDragElement);
+                document.removeEventListener('touchmove', elementTouchDrag);
+            }
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('去哪儿屙小程序原型已加载');
+            
+            // 模拟地图加载
+            setTimeout(() => {
+                const mapPlaceholder = document.querySelector('.map-placeholder');
+                if (mapPlaceholder) {
+                    mapPlaceholder.innerHTML = '<img src="https://picsum.photos/400/300" style="width: 100%; height: 100%; object-fit: cover;" alt="地图">';
+                }
+            }, 1000);
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- PRD标注浮窗 -->
+    <div id="tooltip-1" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[1] 需求描述：顶部导航栏</div>
+            <button class="tooltip-close" onclick="closeTooltip(1)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>Logo</td><td>图标</td><td>展示逻辑：页面左上角显示，固定显示厕所图标和应用名称</td></tr><tr><td>定位区域</td><td>文本+图标</td><td>展示逻辑：页面顶部居中显示；显示当前位置和刷新按钮</td></tr><tr><td>搜索按钮</td><td>按钮</td><td>操作逻辑：点击后跳转到搜索页面；权限逻辑：所有用户可见</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-2" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[2] 需求描述：地图容器</div>
+            <button class="tooltip-close" onclick="closeTooltip(2)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>地图</td><td>地图</td><td>展示逻辑：首页主区域显示；赋值逻辑：自动加载用户当前位置和附近厕所位置</td></tr><tr><td>加载状态</td><td>加载动画</td><td>展示逻辑：地图加载时显示</td></tr><tr><td>网络错误状态</td><td>错误提示</td><td>展示逻辑：网络连接失败时显示，包含重试按钮</td></tr><tr><td>用户定位标记</td><td>标记</td><td>展示逻辑：地图上显示用户当前位置</td></tr><tr><td>厕所标记</td><td>标记</td><td>展示逻辑：地图上显示附近厕所位置，点击显示厕所信息卡片</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-3" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[3] 需求描述：厕所信息卡片</div>
+            <button class="tooltip-close" onclick="closeTooltip(3)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>厕所名称</td><td>文本</td><td>展示逻辑：卡片顶部显示</td></tr><tr><td>地址</td><td>文本</td><td>展示逻辑：名称下方显示；包含地图标记图标</td></tr><tr><td>状态</td><td>标签</td><td>展示逻辑：名称右侧显示；赋值逻辑：开放中/维修中/拥挤</td></tr><tr><td>开放时间</td><td>文本</td><td>展示逻辑：地址下方显示</td></tr><tr><td>评分</td><td>星级+文本</td><td>展示逻辑：时间右侧显示；赋值逻辑：显示平均评分和评价数量</td></tr><tr><td>设施标签</td><td>标签组</td><td>展示逻辑：评分下方显示；包含免费/无障碍/有纸等标签</td></tr><tr><td>查看详情按钮</td><td>按钮</td><td>操作逻辑：点击后跳转到详情页面；权限逻辑：所有用户可见</td></tr><tr><td>导航按钮</td><td>按钮</td><td>操作逻辑：点击后跳转到导航页面；权限逻辑：所有用户可见</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-4" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[4] 需求描述：筛选工具栏</div>
+            <button class="tooltip-close" onclick="closeTooltip(4)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>筛选标签</td><td>按钮组</td><td>操作逻辑：点击后筛选对应条件的厕所；包含距离优先、免费、无障碍、有纸、开放中</td></tr><tr><td>清除按钮</td><td>按钮</td><td>操作逻辑：点击后清除所有筛选条件</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-5" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[5] 需求描述：搜索页面</div>
+            <button class="tooltip-close" onclick="closeTooltip(5)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>返回按钮</td><td>按钮</td><td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td></tr><tr><td>搜索输入框</td><td>文本</td><td>输入逻辑：支持文本输入；校验逻辑：无特殊校验</td></tr><tr><td>搜索按钮</td><td>按钮</td><td>操作逻辑：点击后执行搜索；权限逻辑：所有用户可见</td></tr><tr><td>搜索历史</td><td>标签组</td><td>展示逻辑：显示历史搜索关键词；操作逻辑：点击后快速搜索</td></tr><tr><td>搜索结果</td><td>列表</td><td>展示逻辑：显示匹配的厕所列表；操作逻辑：点击后显示厕所详情</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-6" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[6] 需求描述：详情页面</div>
+            <button class="tooltip-close" onclick="closeTooltip(6)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>返回按钮</td><td>按钮</td><td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td></tr><tr><td>厕所名称</td><td>文本</td><td>展示逻辑：页面顶部显示</td></tr><tr><td>地址</td><td>文本</td><td>展示逻辑：名称下方显示；包含地图标记图标</td></tr><tr><td>状态</td><td>标签</td><td>展示逻辑：名称右侧显示；赋值逻辑：开放中/维修中/拥挤</td></tr><tr><td>开放时间</td><td>文本</td><td>展示逻辑：卡片区域显示</td></tr><tr><td>评分</td><td>文本</td><td>展示逻辑：开放时间右侧显示</td></tr><tr><td>设施标签</td><td>标签组</td><td>展示逻辑：单独卡片显示；包含免费/无障碍/有纸等标签</td></tr><tr><td>用户评价列表</td><td>列表</td><td>展示逻辑：设施标签下方显示；包含评价者信息、评分、内容、时间</td></tr><tr><td>评价按钮</td><td>按钮</td><td>操作逻辑：点击后跳转到评价页面；权限逻辑：所有用户可见</td></tr><tr><td>导航按钮</td><td>按钮</td><td>操作逻辑：点击后跳转到导航页面；权限逻辑：所有用户可见</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-7" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[7] 需求描述：导航地图</div>
+            <button class="tooltip-close" onclick="closeTooltip(7)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>返回按钮</td><td>按钮</td><td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td></tr><tr><td>导航地图</td><td>地图</td><td>展示逻辑：全屏显示；赋值逻辑：显示当前位置和目标厕所位置，以及导航路径</td></tr><tr><td>加载状态</td><td>加载动画</td><td>展示逻辑：地图加载时显示</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-8" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[8] 需求描述：导航信息卡片</div>
+            <button class="tooltip-close" onclick="closeTooltip(8)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>厕所名称</td><td>文本</td><td>展示逻辑：卡片顶部显示</td></tr><tr><td>距离</td><td>文本</td><td>展示逻辑：名称下方显示；赋值逻辑：显示实时距离</td></tr><tr><td>预计时间</td><td>文本</td><td>展示逻辑：距离下方显示；赋值逻辑：根据距离计算步行时间</td></tr><tr><td>指南针按钮</td><td>按钮</td><td>操作逻辑：点击后显示指南针；权限逻辑：所有用户可见</td></tr><tr><td>开始导航按钮</td><td>按钮</td><td>操作逻辑：点击后开始实时导航；权限逻辑：所有用户可见</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-9" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[9] 需求描述：评价页面</div>
+            <button class="tooltip-close" onclick="closeTooltip(9)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>返回按钮</td><td>按钮</td><td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td></tr><tr><td>页面标题</td><td>文本</td><td>展示逻辑：页面顶部居中显示</td></tr><tr><td>厕所名称</td><td>文本</td><td>展示逻辑：返回按钮下方显示</td></tr><tr><td>厕所地址</td><td>文本</td><td>展示逻辑：名称下方显示；包含地图标记图标</td></tr><tr><td>评分标题</td><td>文本</td><td>展示逻辑：评分区域顶部显示</td></tr><tr><td>星级评分</td><td>交互元素</td><td>操作逻辑：点击星星设置评分；赋值逻辑：点击后显示对应数量的实心星星</td></tr><tr><td>评价内容</td><td>文本域</td><td>输入逻辑：支持多行文本输入；校验逻辑：提交时不能为空；最大长度：500字</td></tr><tr><td>图片上传</td><td>上传组件</td><td>操作逻辑：点击后选择图片；赋值逻辑：显示已上传图片预览；最大数量：3张</td></tr><tr><td>提交按钮</td><td>按钮</td><td>操作逻辑：点击后提交评价；前置条件：必须先设置评分和填写评价内容；成功结果：提示提交成功并返回首页；失败结果：提示错误信息</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-10" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[10] 需求描述：排行榜页面</div>
+            <button class="tooltip-close" onclick="closeTooltip(10)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>返回按钮</td><td>按钮</td><td>操作逻辑：点击后返回首页；权限逻辑：所有用户可见</td></tr><tr><td>页面标题</td><td>文本</td><td>展示逻辑：页面顶部居中显示</td></tr><tr><td>Tab切换</td><td>按钮组</td><td>操作逻辑：切换夯榜/拉榜；展示逻辑：当前Tab高亮显示</td></tr><tr><td>排行榜列表</td><td>列表</td><td>展示逻辑：显示排名、厕所名称、地址、评分、评价数量、设施标签</td></tr><tr><td>列表项点击</td><td>事件</td><td>操作逻辑：点击后跳转到厕所详情页面</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-11" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[11] 需求描述：我的页面</div>
+            <button class="tooltip-close" onclick="closeTooltip(11)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>页面标题</td><td>文本</td><td>展示逻辑：页面顶部居中显示</td></tr><tr><td>用户头像</td><td>图标</td><td>展示逻辑：用户信息区域显示</td></tr><tr><td>用户名称</td><td>文本</td><td>展示逻辑：头像右侧显示</td></tr><tr><td>登录提示</td><td>文本</td><td>展示逻辑：名称下方显示</td></tr><tr><td>历史导航入口</td><td>按钮</td><td>操作逻辑：点击后跳转到历史导航页面</td></tr><tr><td>我的收藏入口</td><td>按钮</td><td>操作逻辑：点击后跳转到收藏页面</td></tr><tr><td>设置入口</td><td>按钮</td><td>操作逻辑：点击后跳转到设置页面</td></tr><tr><td>使用指南入口</td><td>按钮</td><td>操作逻辑：点击后跳转到使用指南页面</td></tr><tr><td>帮助与反馈入口</td><td>按钮</td><td>操作逻辑：点击后跳转到帮助与反馈页面</td></tr><tr><td>关于我们入口</td><td>按钮</td><td>操作逻辑：点击后跳转到关于我们页面</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-12" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[12] 需求描述：设置页面</div>
+            <button class="tooltip-close" onclick="closeTooltip(12)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>返回按钮</td><td>按钮</td><td>操作逻辑：点击后返回我的页面；权限逻辑：所有用户可见</td></tr><tr><td>页面标题</td><td>文本</td><td>展示逻辑：页面顶部居中显示</td></tr><tr><td>消息通知开关</td><td>开关</td><td>操作逻辑：点击后切换开关状态；默认状态：开启</td></tr><tr><td>提示音开关</td><td>开关</td><td>操作逻辑：点击后切换开关状态；默认状态：关闭</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-13" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[13] 需求描述：使用指南页面</div>
+            <button class="tooltip-close" onclick="closeTooltip(13)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>返回按钮</td><td>按钮</td><td>操作逻辑：点击后返回我的页面；权限逻辑：所有用户可见</td></tr><tr><td>页面标题</td><td>文本</td><td>展示逻辑：页面顶部居中显示</td></tr><tr><td>指南内容</td><td>文本</td><td>展示逻辑：分步骤展示查找厕所、导航、评价的使用方法</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-14" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[14] 需求描述：帮助与反馈页面</div>
+            <button class="tooltip-close" onclick="closeTooltip(14)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>返回按钮</td><td>按钮</td><td>操作逻辑：点击后返回我的页面；权限逻辑：所有用户可见</td></tr><tr><td>页面标题</td><td>文本</td><td>展示逻辑：页面顶部居中显示</td></tr><tr><td>反馈内容</td><td>文本域</td><td>输入逻辑：支持多行文本输入；校验逻辑：提交时不能为空</td></tr><tr><td>提交按钮</td><td>按钮</td><td>操作逻辑：点击后提交反馈；成功结果：提示提交成功并返回我的页面</td></tr><tr><td>联系方式</td><td>文本</td><td>展示逻辑：页面底部显示；包含邮箱和电话</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-15" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[15] 需求描述：关于我们页面</div>
+            <button class="tooltip-close" onclick="closeTooltip(15)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>返回按钮</td><td>按钮</td><td>操作逻辑：点击后返回我的页面；权限逻辑：所有用户可见</td></tr><tr><td>页面标题</td><td>文本</td><td>展示逻辑：页面顶部居中显示</td></tr><tr><td>关于内容</td><td>文本</td><td>展示逻辑：包含应用介绍、功能特色、用户协议</td></tr><tr><td>版本号</td><td>文本</td><td>展示逻辑：页面底部居中显示</td></tr></table>
+        </div>
+    </div>
+    <div id="tooltip-16" class="annotation-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <div class="tooltip-title">[16] 需求描述：底部导航栏</div>
+            <button class="tooltip-close" onclick="closeTooltip(16)">×</button>
+        </div>
+        <div class="tooltip-content">
+            <h3>字段说明</h3>
+            <table><tr><th>字段</th><th>类型</th><th>逻辑细节</th></tr><tr><td>首页按钮</td><td>按钮</td><td>操作逻辑：点击后跳转到首页；展示逻辑：当前在首页时高亮显示</td></tr><tr><td>排行榜按钮</td><td>按钮</td><td>操作逻辑：点击后跳转到排行榜页面；展示逻辑：当前在排行榜页时高亮显示</td></tr><tr><td>我的按钮</td><td>按钮</td><td>操作逻辑：点击后跳转到我的页面；展示逻辑：当前在我的页面时高亮显示</td></tr></table>
+        </div>
+    </div>
+</body>
+</html>

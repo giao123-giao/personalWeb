@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI实践详情">
+    <meta name="keywords" content="AI产品,AI Agent,Dify,产品工作AI化">
+    <meta name="author" content="张银豪">
+    <title>AI实践详情</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #FAFAFA;
+            --gray: #636E72;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-primary: #FAFAFA;
+            --border-color: #2D3436;
+            --transition-normal: 0.3s;
+            --radius-lg: 20px;
+            --spacing-xl: 60px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #FF8C5A;
+                --secondary: #6ED9D0;
+                --accent: #FFE66D;
+                --dark: #FAFAFA;
+                --light: #1A1A2E;
+                --gray: #A0A0A0;
+                --card-bg: #16213E;
+                --text-primary: #FAFAFA;
+                --text-secondary: #A0A0A0;
+                --bg-primary: #0F0F1A;
+                --border-color: #3A3A5A;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            transition: all var(--transition-normal);
+            margin-bottom: 40px;
+        }
+
+        .back-link:hover {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .practice-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .practice-title {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .practice-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-bottom: 30px;
+            transition: all var(--transition-normal);
+        }
+
+        .section:hover {
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 0 var(--border-color);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .section-content {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .section-content p {
+            margin-bottom: 15px;
+        }
+
+        .section-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .section-content li {
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-color);
+            position: relative;
+            padding-left: 28px;
+            font-size: 15px;
+        }
+
+        .section-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .section-content li:last-child {
+            border-bottom: none;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .benefit-card {
+            text-align: center;
+            padding: 25px;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 12px;
+            border: 1px solid var(--secondary);
+        }
+
+        .benefit-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .benefit-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .benefit-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .practice-iframe-container {
+            width: 95vw;
+            max-width: 1400px;
+            margin: 0 auto;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+        }
+
+        .practice-iframe {
+            width: 100%;
+            height: 900px;
+            border: none;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            .practice-title {
+                font-size: 28px;
+            }
+
+            .practice-icon {
+                font-size: 56px;
+            }
+
+            .section {
+                padding: 25px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 16px;
+            }
+
+            .practice-title {
+                font-size: 24px;
+            }
+
+            .practice-icon {
+                font-size: 48px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .back-link {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="container">
+            <a href="#" onclick="goBack(); return false;" class="back-link">
+                ← 返回上一页
+            </a>
+
+            <div class="practice-header">
+                <div class="practice-icon" id="practiceIcon">🤖</div>
+                <h1 class="practice-title" id="practiceTitle">AI实践名称</h1>
+            </div>
+
+            <div class="practice-content">
+                <section class="section">
+                    <h2 class="section-title">功能介绍</h2>
+                    <div class="section-content" id="practiceFeatures">
+                        <ul>
+                            <li>功能介绍将在这里显示...</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h2 class="section-title">应用场景</h2>
+                    <div class="section-content" id="practiceScenarios">
+                        <p>应用场景将在这里显示...</p>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h2 class="section-title">实践价值</h2>
+                    <div class="benefits-grid" id="practiceBenefits">
+                        <div class="benefit-card">
+                            <div class="benefit-icon">⏱️</div>
+                            <div class="benefit-title">提升效率</div>
+                            <div class="benefit-desc">节省时间成本</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon">🎯</div>
+                            <div class="benefit-title">提高质量</div>
+                            <div class="benefit-desc">提升输出质量</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon">💡</div>
+                            <div class="benefit-title">激发创意</div>
+                            <div class="benefit-desc">拓展思维边界</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="practice-iframe-container" id="iframeContainer" style="display: none;">
+            <iframe class="practice-iframe" id="practiceIframe" src="" title="实践内容"></iframe>
+        </div>
+    </main>
+
+    <script>
+        const practices = {
+            'ai-doc': {
+                title: 'AI文档助手',
+                icon: '📝',
+                features: [
+                    '需求文档自动生成与优化',
+                    'PRD文档格式标准化',
+                    '竞品分析报告辅助撰写',
+                    '用户故事自动梳理',
+                    '文档内容润色与优化',
+                    '技术文档翻译支持'
+                ],
+                scenarios: '产品经理在日常工作中需要撰写大量文档，包括需求文档、PRD文档、竞品分析报告等。AI文档助手可以帮助产品经理快速生成文档初稿，优化文档结构和内容，大幅提升文档撰写效率和质量。',
+                benefits: [
+                    { icon: '⏱️', title: '效率提升', desc: '文档撰写时间减少50%以上' },
+                    { icon: '📋', title: '质量提升', desc: '文档结构更规范专业' },
+                    { icon: '💡', title: '创意激发', desc: '提供多种写作思路' }
+                ]
+            },
+            'prd-writing': {
+                title: 'PRD撰写Skill',
+                icon: '📄',
+                iframeUrl: 'prd-writing-skill.html'
+            },
+            'prd-annotation': {
+                title: 'PRD标注到原型',
+                icon: '🏷️',
+                iframeUrl: 'prd-annotation.html'
+            },
+            'mobile-prototype': {
+                title: '移动端原型设计',
+                icon: '📱',
+                iframeUrl: 'mobile-prototype-design.html'
+            },
+            'rag-strategy': {
+                title: 'RAG数据处理策略',
+                icon: '🧠',
+                iframeUrl: 'rag-data-strategy.html'
+            },
+            'ai-analysis': {
+                title: '智能数据分析',
+                icon: '📊',
+                features: [
+                    '用户行为模式识别',
+                    '数据可视化自动生成',
+                    '异常数据智能预警',
+                    '业务趋势预测分析',
+                    '数据报告自动生成',
+                    '多维度数据分析'
+                ],
+                scenarios: '数据分析是产品经理的核心工作之一。智能数据分析工具可以帮助产品经理快速发现数据中的规律和异常，自动生成数据可视化图表，提供业务趋势预测，让数据驱动的决策更加高效准确。',
+                benefits: [
+                    { icon: '🔍', title: '洞察发现', desc: '快速发现隐藏规律' },
+                    { icon: '📈', title: '趋势预测', desc: '准确预测业务趋势' },
+                    { icon: '⚠️', title: '风险预警', desc: '及时发现异常数据' }
+                ]
+            },
+            'ai-cs': {
+                title: '智能客服助手',
+                icon: '💬',
+                features: [
+                    '7x24小时智能问答',
+                    '常见问题自动解答',
+                    '用户意图精准识别',
+                    '多轮对话上下文理解',
+                    '个性化服务推荐',
+                    '客服工单自动分配'
+                ],
+                scenarios: '智能客服助手可以为用户提供7x24小时不间断的服务支持，自动解答常见问题，识别用户意图，提供个性化服务推荐，大幅提升用户服务体验，同时减轻人工客服的工作负担。',
+                benefits: [
+                    { icon: '24/7', title: '全天候服务', desc: '随时响应用户需求' },
+                    { icon: '⚡', title: '快速响应', desc: '秒级响应用户问题' },
+                    { icon: '💰', title: '成本降低', desc: '减少人工客服成本' }
+                ]
+            },
+            'ai-search': {
+                title: '智能搜索推荐',
+                icon: '🔍',
+                features: [
+                    '语义搜索与理解',
+                    '个性化内容推荐',
+                    '搜索意图预测',
+                    '相关内容联想推荐',
+                    '搜索结果智能排序',
+                    '多模态搜索支持'
+                ],
+                scenarios: '智能搜索推荐系统可以理解用户的搜索意图，提供精准的搜索结果和个性化推荐，提升用户的信息获取效率，增强产品的用户体验和粘性。',
+                benefits: [
+                    { icon: '🎯', title: '精准匹配', desc: '理解用户真实意图' },
+                    { icon: '✨', title: '个性化', desc: '千人千面的推荐' },
+                    { icon: '🚀', title: '高效', desc: '快速找到所需内容' }
+                ]
+            },
+            'ai-trace': {
+                title: '质量追溯Agent',
+                icon: '🧠',
+                features: [
+                    '全链路质量追溯',
+                    '自然语言查询接口',
+                    '智能库存分析',
+                    '采购决策辅助',
+                    '基于RAG的知识检索',
+                    'ERP系统无缝集成'
+                ],
+                scenarios: '基于Dify构建的工业级AI追溯系统，实现从成品到原材料的全链路逆向质量追溯，同时辅助进行库存分析和采购决策，显著提升企业的质量管理水平和运营效率。',
+                benefits: [
+                    { icon: '🔄', title: '全链路追溯', desc: '成品到原材料追溯' },
+                    { icon: '97%', title: '效率提升', desc: '追溯效率提升97%' },
+                    { icon: '📊', title: '智能决策', desc: '辅助采购决策' }
+                ]
+            },
+            'ai-dev': {
+                title: 'AI辅助开发',
+                icon: '⚙️',
+                features: [
+                    '代码生成与审查',
+                    '技术方案文档撰写',
+                    'API文档自动生成',
+                    '测试用例辅助设计',
+                    '代码注释自动生成',
+                    '技术选型建议'
+                ],
+                scenarios: 'AI辅助开发工具可以帮助开发人员快速生成代码，审查代码质量，自动生成技术文档和测试用例，提升开发效率和代码质量，让开发人员专注于更有价值的工作。',
+                benefits: [
+                    { icon: '⚡', title: '开发提速', desc: '代码编写效率提升' },
+                    { icon: '✅', title: '质量保障', desc: '代码质量更高' },
+                    { icon: '📚', title: '文档完善', desc: '自动生成技术文档' }
+                ]
+            }
+        };
+
+        function getUrlParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        function renderPractice(practiceId) {
+            const practice = practices[practiceId];
+            if (!practice) {
+                document.getElementById('practiceTitle').textContent = '实践内容不存在';
+                return;
+            }
+
+            document.title = practice.title + ' - AI实践详情';
+            document.getElementById('practiceTitle').textContent = practice.title;
+            document.getElementById('practiceIcon').textContent = practice.icon;
+
+            if (practice.iframeUrl) {
+                document.querySelector('.practice-content').style.display = 'none';
+                document.getElementById('iframeContainer').style.display = 'block';
+                document.getElementById('practiceIframe').src = practice.iframeUrl;
+            } else {
+                document.querySelector('.practice-content').style.display = 'block';
+                document.getElementById('iframeContainer').style.display = 'none';
+                
+                const featureList = practice.features.map(item => '<li>' + item + '</li>').join('');
+                document.getElementById('practiceFeatures').innerHTML = '<ul>' + featureList + '</ul>';
+
+                document.getElementById('practiceScenarios').innerHTML = '<p>' + practice.scenarios + '</p>';
+
+                const benefitsHtml = practice.benefits.map(item => `
+                    <div class="benefit-card">
+                        <div class="benefit-icon">${item.icon}</div>
+                        <div class="benefit-title">${item.title}</div>
+                        <div class="benefit-desc">${item.desc}</div>
+                    </div>
+                `).join('');
+                document.getElementById('practiceBenefits').innerHTML = benefitsHtml;
+            }
+        }
+
+        function goBack() {
+            history.back();
+        }
+
+        const practiceId = getUrlParam('id') || 'ai-doc';
+        renderPractice(practiceId);
+    </script>
+</body>
+</html>
