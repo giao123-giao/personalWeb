@@ -188,6 +188,90 @@
             display: block;
         }
 
+        .iframe-fallback {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .fallback-content {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .fallback-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .fallback-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .fallback-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+
+        .fallback-link {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .fallback-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .fallback-preview {
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: left;
+        }
+
+        .preview-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .preview-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .preview-features li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .preview-features li:last-child {
+            border-bottom: none;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 40px 20px;
@@ -260,7 +344,27 @@
         </div>
         
         <div class="showcase-iframe-container" id="iframeContainer" style="display: none;">
-            <iframe class="showcase-iframe" id="showcaseIframe" src="" title="作品展示"></iframe>
+            <div class="iframe-fallback" id="iframeFallback" style="display: none;">
+                <div class="fallback-content">
+                    <div class="fallback-icon">🔍</div>
+                    <h3 class="fallback-title">汽车转向轴质量追溯Agent系统</h3>
+                    <p class="fallback-desc">由于安全限制，该系统无法在页面内直接展示</p>
+                    <a href="https://udify.app/chatbot/W0Jx2bwxhxCSLmur" target="_blank" rel="noopener noreferrer" class="fallback-link">
+                        在新窗口中打开系统 →
+                    </a>
+                    <div class="fallback-preview">
+                        <p class="preview-title">系统功能预览：</p>
+                        <ul class="preview-features">
+                            <li>📊 自然语言查询质量追溯</li>
+                            <li>🔗 全链路逆向追溯（成品→原材料）</li>
+                            <li>📈 库存分析与采购决策辅助</li>
+                            <li>⚡ 追溯效率提升97%以上</li>
+                            <li>✅ 准确率达95%</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <iframe class="showcase-iframe" id="showcaseIframe" src="" title="作品展示" onload="iframeLoaded()" onerror="iframeError()"></iframe>
         </div>
     </main>
 
@@ -285,6 +389,17 @@
                     desc: '完整的产品需求文档，包含产品概览、8个核心需求的详细说明、业务流程图和测试验收标准。'
                 },
                 iframeUrl: 'visitor-mgmt-detail.html'
+            },
+            'quality-trace-agent': {
+                title: '汽车转向轴质量追溯Agent系统',
+                tags: ['Agent', 'AI应用', '企业实践'],
+                overview: '某汽车零部件制造企业面临产品质量追溯困难的问题，传统的追溯方式依赖人工查找纸质单据，效率低下且容易出错。企业希望通过数字化手段实现从成品到原材料的全链路逆向质量追溯，提升质量管理水平和客户满意度。',
+                showcase: {
+                    icon: '🔍',
+                    desc: '基于自然语言处理的质量追溯智能体系统演示'
+                },
+                iframeUrl: null,
+                customIframe: '<iframe src="https://udify.app/chatbot/W0Jx2bwxhxCSLmur" style="width: 100%; height: 100%; min-height: 700px" frameborder="0" allow="microphone"></iframe>'
             },
         };
 
@@ -313,7 +428,14 @@
 
             document.getElementById('workOverview').innerHTML = '<p>' + work.overview + '</p>';
 
-            if (work.iframeUrl) {
+            if (work.customIframe) {
+                document.getElementById('workShowcase').style.display = 'none';
+                document.getElementById('iframeContainer').style.display = 'block';
+                document.getElementById('iframeFallback').style.display = 'none';
+                const iframe = document.getElementById('showcaseIframe');
+                iframe.src = 'https://udify.app/chatbot/W0Jx2bwxhxCSLmur';
+                iframe.style.display = 'block';
+            } else if (work.iframeUrl) {
                 document.getElementById('workShowcase').style.display = 'none';
                 document.getElementById('iframeContainer').style.display = 'block';
                 document.getElementById('showcaseIframe').src = work.iframeUrl;
@@ -323,6 +445,15 @@
                 document.querySelector('.showcase-icon').textContent = work.showcase.icon;
                 document.getElementById('showcaseDesc').textContent = work.showcase.desc;
             }
+        }
+
+        function iframeLoaded() {
+            document.getElementById('iframeFallback').style.display = 'none';
+        }
+
+        function iframeError() {
+            document.getElementById('showcaseIframe').style.display = 'none';
+            document.getElementById('iframeFallback').style.display = 'flex';
         }
 
         function goBack() {
